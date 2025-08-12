@@ -27,12 +27,24 @@ function getTextColor(bgColor) {
       </div>
     </a>
   </div>
+  <% if (typeof categorias !== 'undefined') { categorias.forEach(cat => { %>
+    <div class="col-md-4">
+      <a href="/trabajos?categoria=<%= cat._id %>" style="text-decoration:none;">
+        <div class="card shadow-sm border-0 mb-3" style="background-color: #f8f9fa;">
+          <div class="card-body d-flex flex-column align-items-center" style="color: #222;">
+            <i class="<%= cat.icono || 'bi bi-tag' %>" style="font-size:2.5rem"></i>
+            <h5 class="card-title mt-2"><%= cat.nombre %></h5>
+          </div>
+        </div>
+      </a>
+    </div>
+  <% }) } %>
   <% estados.forEach(estado => { %>
     <div class="col-md-4">
       <a href="/trabajos?estado=<%= estado._id %>" style="text-decoration:none;">
         <div class="card shadow-sm border-0 mb-3" style="background-color: <%= estado.color %>;">
           <div class="card-body d-flex flex-column align-items-center" style="color: <%= getTextColor(estado.color) %>;">
-            <i class="bi bi-clipboard-check" style="font-size:2.5rem;"></i>
+            <i class="<%= estado.icono || 'bi bi-flag' %>" style="font-size:2.5rem"></i>
             <h5 class="card-title mt-2"><%= estado.nombre %></h5>
             <p class="card-text fs-2 fw-bold"><%= trabajosPorEstado[estado.nombre] || 0 %></p>
           </div>

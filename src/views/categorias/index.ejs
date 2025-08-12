@@ -5,6 +5,7 @@
   <thead>
     <tr>
       <th>Nombre</th>
+      <th>Icono</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -12,6 +13,10 @@
     <% categorias.forEach(cat => { %>
       <tr>
         <td><%= cat.nombre %></td>
+        <td>
+          <i class="<%= cat.icono || 'bi bi-tag' %>" style="font-size:1.5rem"></i>
+          <span class="text-muted" style="font-size:0.9rem"><%= cat.icono || 'bi bi-tag' %></span>
+        </td>
         <td>
           <a href="/categorias/<%= cat._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
             <i class="bi bi-pencil"></i>

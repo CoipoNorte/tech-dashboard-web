@@ -6,6 +6,7 @@
     <tr>
       <th>Nombre</th>
       <th>Color</th>
+      <th>Icono</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -15,6 +16,10 @@
         <td><%= est.nombre %></td>
         <td>
           <span class="badge" style="background-color: <%= est.color %>"><%= est.color %></span>
+        </td>
+        <td>
+          <i class="<%= est.icono || 'bi bi-flag' %>" style="font-size:1.5rem"></i>
+          <span class="text-muted" style="font-size:0.9rem"><%= est.icono || 'bi bi-flag' %></span>
         </td>
         <td>
           <a href="/estados/<%= est._id %>/editar" class="btn btn-sm btn-primary" title="Editar">

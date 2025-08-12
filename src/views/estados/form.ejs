@@ -9,7 +9,56 @@
     <label>Color</label>
     <input type="color" name="color" class="form-control form-control-color" value="<%= estado.color || '#6c757d' %>">
   </div>
+  <div class="mb-3">
+    <label>Icono</label>
+    <input type="hidden" name="icono" id="iconoInput" value="<%= estado.icono || 'bi bi-flag' %>">
+    <div class="table-responsive">
+      <table class="table table-bordered" style="max-width: 400px;">
+        <tbody>
+          <%
+            const iconos = [
+              'bi bi-flag', 'bi bi-flag-fill', 'bi bi-check-circle', 'bi bi-hourglass', 'bi bi-hourglass-split',
+              'bi bi-hourglass-bottom', 'bi bi-hourglass-top', 'bi bi-check2-circle', 'bi bi-check-lg', 'bi bi-x-circle',
+              'bi bi-exclamation-circle', 'bi bi-info-circle', 'bi bi-lightning', 'bi bi-rocket', 'bi bi-archive',
+              'bi bi-box-seam', 'bi bi-truck', 'bi bi-calendar-check', 'bi bi-calendar-event', 'bi bi-calendar2-check'
+            ];
+            for (let i = 0; i < iconos.length; i += 4) { %>
+              <tr>
+                <% for (let j = 0; j < 4; j++) {
+                  const idx = i + j;
+                  if (iconos[idx]) { %>
+                    <td class="text-center">
+                      <button type="button"
+                        class="btn btn-light icono-btn <%= (estado.icono === iconos[idx] || (!estado.icono && iconos[idx] === 'bi bi-flag')) ? 'border-primary border-3' : '' %>"
+                        data-icono="<%= iconos[idx] %>">
+                        <i class="<%= iconos[idx] %>" style="font-size:2rem"></i>
+                      </button>
+                    </td>
+                  <% } else { %>
+                    <td></td>
+                  <% } %>
+                <% } %>
+              </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-2">
+      <span>Vista previa: </span>
+      <i id="iconoPreview" class="<%= estado.icono || 'bi bi-flag' %>" style="font-size:2rem"></i>
+    </div>
+  </div>
   <button class="btn btn-primary">Guardar</button>
   <a href="/estados" class="btn btn-secondary">Cancelar</a>
 </form>
+<script>
+  document.querySelectorAll('.icono-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('iconoInput').value = this.getAttribute('data-icono');
+      document.getElementById('iconoPreview').className = this.getAttribute('data-icono');
+      document.querySelectorAll('.icono-btn').forEach(b => b.classList.remove('border-primary', 'border-3'));
+      this.classList.add('border-primary', 'border-3');
+    });
+  });
+</script>
 <%- include('../partials/footer') %>

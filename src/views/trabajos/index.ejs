@@ -27,26 +27,29 @@ function formatFecha(fecha) {
   <input type="hidden" name="q" value="<%= req.query.q || '' %>">
   <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
 
+    <!-- Filtro de Categoría con iconos -->
     <div class="d-flex align-items-center flex-wrap gap-1">
       <span class="fw-bold me-1">Categoría:</span>
       <a href="/trabajos?<%= new URLSearchParams({ ...req.query, categoria: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.categoria ? 'active' : '' %>" title="Todas"><i class="bi bi-tags"></i></a>
       <% categorias.forEach(cat => { %>
         <a href="/trabajos?<%= new URLSearchParams({ ...req.query, categoria: cat._id }).toString() %>" class="btn btn-outline-primary btn-sm <%= isActive(req.query.categoria, cat._id) %>" title="<%= cat.nombre %>">
-          <i class="bi bi-tag"></i> <%= cat.nombre %>
+          <i class="<%= cat.icono || 'bi bi-tag' %>"></i> <%= cat.nombre %>
         </a>
       <% }) %>
     </div>
 
+    <!-- Filtro de Estado con iconos -->
     <div class="d-flex align-items-center flex-wrap gap-1">
       <span class="fw-bold me-1">Estado:</span>
       <a href="/trabajos?<%= new URLSearchParams({ ...req.query, estado: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.estado ? 'active' : '' %>" title="Todos"><i class="bi bi-flag"></i></a>
       <% estados.forEach(est => { %>
         <a href="/trabajos?<%= new URLSearchParams({ ...req.query, estado: est._id }).toString() %>" class="btn btn-sm <%= isActive(req.query.estado, est._id) %>" style="background-color:<%= est.color %>; color:#fff;" title="<%= est.nombre %>">
-          <i class="bi bi-flag-fill"></i> <%= est.nombre %>
+          <i class="<%= est.icono || 'bi bi-flag' %>"></i> <%= est.nombre %>
         </a>
       <% }) %>
     </div>
 
+    <!-- Filtro de Urgencia -->
     <div class="d-flex align-items-center flex-wrap gap-1">
       <span class="fw-bold me-1">Urgencia:</span>
       <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.urgencia ? 'active' : '' %>" title="Todas"><i class="bi bi-exclamation-circle"></i></a>
@@ -57,6 +60,7 @@ function formatFecha(fecha) {
       <% }) %>
     </div>
 
+    <!-- Filtro de Fechas -->
     <div class="d-flex align-items-center flex-wrap gap-1">
       <span class="fw-bold me-1">Fechas:</span>
       <span class="input-group input-group-sm" style="width:auto;">
@@ -72,6 +76,7 @@ function formatFecha(fecha) {
       </span>
     </div>
 
+    <!-- Ordenar por -->
     <div class="d-flex align-items-center flex-wrap gap-1">
       <span class="fw-bold me-1">Ordenar:</span>
       <select name="orden" class="form-select form-select-sm d-inline-block w-auto" onchange="document.getElementById('filtrosForm').submit()">
@@ -93,8 +98,6 @@ function formatFecha(fecha) {
       <th>Descripción</th>
       <th>Cliente</th>
       <th>Categoría</th>
-      <th>Estado</th>
-      <th>Urgencia</th>
       <th>Precio</th>
       <th>Ingreso</th>
       <th>Entrega</th>
@@ -108,20 +111,24 @@ function formatFecha(fecha) {
           <a href="/trabajos/<%= trabajo._id %>"><%= trabajo.descripcion %></a>
         </td>
         <td><%= trabajo.cliente ? trabajo.cliente.nombre : '' %></td>
-        <td><%= trabajo.categoria ? trabajo.categoria.nombre : '' %></td>
         <td>
-          <span class="badge" style="background-color: <%= trabajo.estado ? trabajo.estado.color : '#ccc' %>">
-            <%= trabajo.estado ? trabajo.estado.nombre : '' %>
+          <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                style="background-color: <%= trabajo.estado ? trabajo.estado.color : '#ccc' %>; width:2.2rem; height:2.2rem;">
+            <i class="<%= trabajo.categoria && trabajo.categoria.icono ? trabajo.categoria.icono : 'bi bi-tag' %>" style="font-size:1.2rem; color:#fff"></i>
           </span>
-        </td>
-        <td>
-          <span class="badge" style="background-color: <%= trabajo.urgencia ? trabajo.urgencia.color : '#ccc' %>">
-            <%= trabajo.urgencia ? trabajo.urgencia.nombre : '' %>
-          </span>
+          <span class="ms-2"><%= trabajo.categoria ? trabajo.categoria.nombre : '' %></span>
         </td>
         <td>$<%= trabajo.precio %></td>
         <td><%= formatFecha(trabajo.fechaIngreso) %></td>
-        <td><%= formatFecha(trabajo.fechaEntrega) %></td>
+        <td>
+          <span class="d-flex align-items-center justify-content-between" style="background-color: #f8f9fa; border-radius: 0.5rem; padding: 0.2rem 0.5rem;">
+            <span><%= formatFecha(trabajo.fechaEntrega) %></span>
+            <% if (trabajo.urgencia) { %>
+              <i class="<%= trabajo.urgencia.icono || 'bi bi-exclamation-circle-fill' %>"
+                 style="color: <%= trabajo.urgencia.color %>; font-size:1.3rem; margin-left:8px"></i>
+            <% } %>
+          </span>
+        </td>
         <td>
           <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
             <i class="bi bi-pencil"></i>
