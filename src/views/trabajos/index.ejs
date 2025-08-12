@@ -28,8 +28,8 @@ function formatMonth(date) {
       <option value="">Ordenar por...</option>
       <option value="precio_asc" <%= req.query.orden === 'precio_asc' ? 'selected' : '' %>>Precio ↑</option>
       <option value="precio_desc" <%= req.query.orden === 'precio_desc' ? 'selected' : '' %>>Precio ↓</option>
-      <option value="fechaIngreso_asc" <%= req.query.orden === 'fechaIngreso_asc' ? 'selected' : '' %>>Fecha inicio ↑</option>
-      <option value="fechaIngreso_desc" <%= req.query.orden === 'fechaIngreso_desc' ? 'selected' : '' %>>Fecha inicio ↓</option>
+      <option value="fechaIngreso_asc" <%= req.query.orden === 'fechaIngreso_asc' ? 'selected' : '' %>>Fecha ingreso ↑</option>
+      <option value="fechaIngreso_desc" <%= req.query.orden === 'fechaIngreso_desc' ? 'selected' : '' %>>Fecha ingreso ↓</option>
       <option value="fechaEntrega_asc" <%= req.query.orden === 'fechaEntrega_asc' ? 'selected' : '' %>>Fecha entrega ↑</option>
       <option value="fechaEntrega_desc" <%= req.query.orden === 'fechaEntrega_desc' ? 'selected' : '' %>>Fecha entrega ↓</option>
     </select>
@@ -68,8 +68,8 @@ function formatMonth(date) {
           </span>
         </td>
         <td>$<%= trabajo.precio %></td>
-        <td><%= formatMonth(trabajo.fechaIngreso) %></td>
-        <td><%= formatMonth(trabajo.fechaEntrega) %></td>
+        <td><%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toLocaleDateString() : '' %></td>
+        <td><%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toLocaleDateString() : '' %></td>
         <td>
           <% if (trabajo.imagen) { %>
             <img src="/uploads/<%= trabajo.imagen %>" alt="Foto" style="width:50px;">

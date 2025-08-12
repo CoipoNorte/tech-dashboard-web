@@ -21,3 +21,23 @@ exports.actualizarPerfil = async (req, res) => {
   await usuario.save();
   res.render('usuarios/perfil', { title: 'Mi Perfil', usuario, error: 'Perfil actualizado correctamente' });
 };
+
+// NUEVO: Mostrar formulario para crear usuario
+exports.formNuevoUsuario = (req, res) => {
+  res.render('usuarios/nuevo', { title: 'Nuevo Usuario', error: null });
+};
+
+// NUEVO: Crear usuario
+exports.crearUsuario = async (req, res) => {
+  const { nombre, username, password } = req.body;
+  if (!nombre || !username || !password) {
+    return res.render('usuarios/nuevo', { title: 'Nuevo Usuario', error: 'Todos los campos son obligatorios' });
+  }
+  const existe = await Usuario.findOne({ username });
+  if (existe) {
+    return res.render('usuarios/nuevo', { title: 'Nuevo Usuario', error: 'El usuario ya existe' });
+  }
+  const usuario = new Usuario({ nombre, username, password });
+  await usuario.save();
+  res.render('usuarios/nuevo', { title: 'Nuevo Usuario', error: 'Usuario creado correctamente' });
+};

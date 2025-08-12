@@ -4,8 +4,6 @@
 <p><strong>Email:</strong> <%= cliente.email %></p>
 <p><strong>Dirección:</strong> <%= cliente.direccion %></p>
 <p><strong>Observaciones:</strong> <%= cliente.observaciones %></p>
-<p><strong>Fecha de creación:</strong> <%= cliente.fechaCreacion ? cliente.fechaCreacion.toLocaleDateString() : '' %></p>
-<p><strong>Última actualización:</strong> <%= cliente.updatedAt ? cliente.updatedAt.toLocaleDateString() : '' %></p>
 <a href="/trabajos/nuevo?cliente=<%= cliente._id %>" class="btn btn-success mb-3"><i class="bi bi-plus-circle"></i> Nuevo Trabajo para este cliente</a>
 <h3>Trabajos</h3>
 <table class="table table-bordered">
@@ -16,6 +14,7 @@
       <th>Estado</th>
       <th>Precio</th>
       <th>Fecha Ingreso</th>
+      <th>Fecha Entrega</th>
     </tr>
   </thead>
   <tbody>
@@ -25,7 +24,8 @@
         <td><%= trabajo.categoria.nombre %></td>
         <td><span class="badge" style="background-color: <%= trabajo.estado.color %>"><%= trabajo.estado.nombre %></span></td>
         <td>$<%= trabajo.precio %></td>
-        <td><%= trabajo.fechaIngreso.toLocaleDateString() %></td>
+        <td><%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toLocaleDateString() : '' %></td>
+        <td><%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toLocaleDateString() : '' %></td>
       </tr>
     <% }) %>
   </tbody>
