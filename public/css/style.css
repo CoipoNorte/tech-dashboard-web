@@ -1,0 +1,30 @@
+body {
+  background: #f8f9fa;
+}
+
+.table img {
+  border-radius: 4px;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand i {
+  font-size: 1.7rem;
+  margin-right: 8px;
+  color: #0dcaf0;
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link:hover {
+  color: #0dcaf0 !important;
+}
+
+.navbar {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
