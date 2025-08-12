@@ -1,6 +1,6 @@
 <%- include('../partials/header', { title }) %>
 <h1><%= title %></h1>
-<form action="<%= action %>" method="post" enctype="multipart/form-data">
+<form action="<%= action %>" method="post" enctype="multipart/form-data" id="trabajoForm">
   <div class="mb-3">
     <label>Cliente</label>
     <select name="cliente" class="form-control" required>
@@ -24,11 +24,11 @@
   </div>
   <div class="mb-3">
     <label>Fecha Ingreso</label>
-    <input type="date" name="fechaIngreso" class="form-control" value="<%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toISOString().substring(0,10) : '' %>">
+    <input type="date" name="fechaIngreso" id="fechaIngreso" class="form-control" value="<%= trabajo.fechaIngresoInput || '' %>">
   </div>
   <div class="mb-3">
     <label>Fecha Entrega</label>
-    <input type="date" name="fechaEntrega" class="form-control" value="<%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toISOString().substring(0,10) : '' %>">
+    <input type="date" name="fechaEntrega" id="fechaEntrega" class="form-control" value="<%= trabajo.fechaEntregaInput || '' %>">
   </div>
   <div class="mb-3">
     <label>Categoría</label>
@@ -50,11 +50,20 @@
   </div>
   <div class="mb-3">
     <label>Urgencia</label>
-    <select name="urgencia" class="form-control" required>
-      <option value="baja" <%= trabajo.urgencia === 'baja' ? 'selected' : '' %>>Baja</option>
-      <option value="media" <%= trabajo.urgencia === 'media' ? 'selected' : '' %>>Media</option>
-      <option value="alta" <%= trabajo.urgencia === 'alta' ? 'selected' : '' %>>Alta</option>
-    </select>
+    <div class="input-group">
+      <select name="urgencia" id="urgenciaSelect" class="form-control" required>
+        <option value="">Seleccione...</option>
+        <% urgencias.forEach(urg => { %>
+          <option value="<%= urg._id %>" data-nombre="<%= urg.nombre %>"
+            <%= (trabajo.urgencia && ((trabajo.urgencia._id ? trabajo.urgencia._id.toString() : trabajo.urgencia.toString()) === urg._id.toString())) ? 'selected' : '' %>>
+            <%= urg.nombre %>
+          </option>
+        <% }) %>
+      </select>
+      <button type="button" class="btn btn-outline-info" id="calcularUrgenciaBtn" title="Calcular urgencia automáticamente">
+        <i class="bi bi-lightning-charge"></i> Calcular
+      </button>
+    </div>
   </div>
   <div class="mb-3">
     <label>Imagen</label>
@@ -66,4 +75,34 @@
   <button class="btn btn-primary">Guardar</button>
   <a href="/trabajos" class="btn btn-secondary">Cancelar</a>
 </form>
+
+<script>
+document.getElementById('calcularUrgenciaBtn').addEventListener('click', function() {
+  const fechaIngreso = document.getElementById('fechaIngreso').value;
+  const fechaEntrega = document.getElementById('fechaEntrega').value;
+  const urgenciaSelect = document.getElementById('urgenciaSelect');
+  if (!fechaIngreso || !fechaEntrega) {
+    for (let i = 0; i < urgenciaSelect.options.length; i++) {
+      if (urgenciaSelect.options[i].text.toLowerCase().trim() === 'nula') {
+        urgenciaSelect.selectedIndex = i;
+        break;
+      }
+    }
+    return;
+  }
+  const d1 = new Date(fechaIngreso);
+  const d2 = new Date(fechaEntrega);
+  const diff = (d2 - d1) / (1000 * 60 * 60 * 24);
+  let urgencia = 'nula';
+  if (diff >= 7) urgencia = 'baja';
+  else if (diff >= 3) urgencia = 'media';
+  else if (diff >= 0) urgencia = 'alta';
+  for (let i = 0; i < urgenciaSelect.options.length; i++) {
+    if (urgenciaSelect.options[i].getAttribute('data-nombre') && urgenciaSelect.options[i].getAttribute('data-nombre').toLowerCase().trim() === urgencia) {
+      urgenciaSelect.selectedIndex = i;
+      break;
+    }
+  }
+});
+</script>
 <%- include('../partials/footer') %>

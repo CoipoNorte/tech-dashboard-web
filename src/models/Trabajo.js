@@ -10,7 +10,7 @@ const trabajoSchema = new mongoose.Schema({
   imagen: String,
   categoria: { type: mongoose.Schema.Types.ObjectId, ref: 'Categoria', required: true },
   estado: { type: mongoose.Schema.Types.ObjectId, ref: 'Estado', required: true },
-  urgencia: { type: String, enum: ['baja', 'media', 'alta'], default: 'media' }
+  urgencia: { type: mongoose.Schema.Types.ObjectId, ref: 'Urgencia', required: true }
 });
 
 module.exports = mongoose.model('Trabajo', trabajoSchema);

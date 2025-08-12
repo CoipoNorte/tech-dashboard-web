@@ -1,0 +1,15 @@
+<%- include('../partials/header', { title }) %>
+<h1><%= title %></h1>
+<form action="<%= action %>" method="post">
+  <div class="mb-3">
+    <label>Nombre</label>
+    <input type="text" name="nombre" class="form-control" value="<%= urgencia.nombre || '' %>" required>
+  </div>
+  <div class="mb-3">
+    <label>Color</label>
+    <input type="color" name="color" class="form-control form-control-color" value="<%= urgencia.color || '#6c757d' %>">
+  </div>
+  <button class="btn btn-primary">Guardar</button>
+  <a href="/urgencias" class="btn btn-secondary">Cancelar</a>
+</form>
+<%- include('../partials/footer') %>

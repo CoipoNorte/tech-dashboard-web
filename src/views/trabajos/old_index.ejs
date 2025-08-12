@@ -1,34 +1,42 @@
 <%- include('../partials/header', { title }) %>
 <%
+function urgenciaColor(urgencia, fechaEntrega) {
+  if (!fechaEntrega) return 'bg-secondary';
+  const dias = (new Date(fechaEntrega) - new Date()) / (1000*60*60*24);
+  if (urgencia === 'alta' || (dias <= 2 && dias >= 0)) return 'bg-danger text-white';
+  if (urgencia === 'media' || (dias <= 5 && dias > 2)) return 'bg-warning text-dark';
+  return 'bg-success text-white';
+}
 function isActive(param, value) {
   return (param && param == value) ? 'active' : '';
 }
-function formatFecha(fecha) {
-  if (!fecha) return '';
-  const d = new Date(fecha);
-  return d.toLocaleDateString('es-ES');
+function isUrgenciaActive(param, value) {
+  return (param && param == value) ? 'active' : '';
 }
 %>
 <h1>Trabajos</h1>
 
+<!-- Barra de búsqueda -->
 <form class="row g-2 mb-3" method="get" id="busquedaForm">
-  <div class="col-12 col-md-8">
+  <div class="col-md-6">
     <div class="input-group">
       <input type="text" name="q" value="<%= req.query.q || '' %>" class="form-control" placeholder="Buscar por descripción o cliente...">
       <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
     </div>
   </div>
-  <div class="col-12 col-md-4 text-end">
-    <a href="/trabajos/nuevo" class="btn btn-success w-100 w-md-auto"><i class="bi bi-plus-circle"></i> Nuevo Trabajo</a>
+  <div class="col-md-6 text-end">
+    <a href="/trabajos/nuevo" class="btn btn-success"><i class="bi bi-plus-circle"></i> Nuevo Trabajo</a>
   </div>
 </form>
 
+<!-- Filtros visuales -->
 <form class="mb-3" method="get" id="filtrosForm">
   <input type="hidden" name="q" value="<%= req.query.q || '' %>">
-  <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+  <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
 
-    <div class="d-flex align-items-center flex-wrap gap-1">
-      <span class="fw-bold me-1">Categoría:</span>
+    <!-- Categorías -->
+    <div>
+      <span class="fw-bold me-2">Categoría:</span>
       <a href="/trabajos?<%= new URLSearchParams({ ...req.query, categoria: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.categoria ? 'active' : '' %>" title="Todas"><i class="bi bi-tags"></i></a>
       <% categorias.forEach(cat => { %>
         <a href="/trabajos?<%= new URLSearchParams({ ...req.query, categoria: cat._id }).toString() %>" class="btn btn-outline-primary btn-sm <%= isActive(req.query.categoria, cat._id) %>" title="<%= cat.nombre %>">
@@ -37,8 +45,9 @@ function formatFecha(fecha) {
       <% }) %>
     </div>
 
-    <div class="d-flex align-items-center flex-wrap gap-1">
-      <span class="fw-bold me-1">Estado:</span>
+    <!-- Estados -->
+    <div>
+      <span class="fw-bold me-2">Estado:</span>
       <a href="/trabajos?<%= new URLSearchParams({ ...req.query, estado: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.estado ? 'active' : '' %>" title="Todos"><i class="bi bi-flag"></i></a>
       <% estados.forEach(est => { %>
         <a href="/trabajos?<%= new URLSearchParams({ ...req.query, estado: est._id }).toString() %>" class="btn btn-sm <%= isActive(req.query.estado, est._id) %>" style="background-color:<%= est.color %>; color:#fff;" title="<%= est.nombre %>">
@@ -47,33 +56,29 @@ function formatFecha(fecha) {
       <% }) %>
     </div>
 
-    <div class="d-flex align-items-center flex-wrap gap-1">
-      <span class="fw-bold me-1">Urgencia:</span>
+    <!-- Urgencia -->
+    <div>
+      <span class="fw-bold me-2">Urgencia:</span>
       <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.urgencia ? 'active' : '' %>" title="Todas"><i class="bi bi-exclamation-circle"></i></a>
-      <% urgencias.forEach(urg => { %>
-        <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: urg._id }).toString() %>" class="btn btn-sm <%= isActive(req.query.urgencia, urg._id) %>" style="background-color:<%= urg.color %>; color:#fff;" title="<%= urg.nombre %>">
-          <i class="bi bi-exclamation-circle-fill"></i> <%= urg.nombre %>
-        </a>
-      <% }) %>
+      <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: 'baja' }).toString() %>" class="btn btn-outline-success btn-sm <%= isUrgenciaActive(req.query.urgencia, 'baja') %>" title="Baja"><i class="bi bi-arrow-down-circle"></i></a>
+      <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: 'media' }).toString() %>" class="btn btn-outline-warning btn-sm <%= isUrgenciaActive(req.query.urgencia, 'media') %>" title="Media"><i class="bi bi-arrow-left-right"></i></a>
+      <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: 'alta' }).toString() %>" class="btn btn-outline-danger btn-sm <%= isUrgenciaActive(req.query.urgencia, 'alta') %>" title="Alta"><i class="bi bi-arrow-up-circle"></i></a>
     </div>
 
-    <div class="d-flex align-items-center flex-wrap gap-1">
-      <span class="fw-bold me-1">Fechas:</span>
-      <span class="input-group input-group-sm" style="width:auto;">
-        <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fechaInicio').showPicker()">
-          <i class="bi bi-calendar-date"></i>
-        </button>
-        <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" value="<%= req.query.fechaInicio || '' %>" style="max-width:130px;" onchange="document.getElementById('filtrosForm').submit()">
+    <!-- Fechas -->
+    <div>
+      <span class="fw-bold me-2">Fechas:</span>
+      <span class="input-group input-group-sm">
+        <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+        <input type="date" name="fechaInicio" class="form-control" value="<%= req.query.fechaInicio || '' %>" onchange="document.getElementById('filtrosForm').submit()">
         <span class="input-group-text"><i class="bi bi-arrow-right"></i></span>
-        <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fechaFin').showPicker()">
-          <i class="bi bi-calendar-date"></i>
-        </button>
-        <input type="date" id="fechaFin" name="fechaFin" class="form-control" value="<%= req.query.fechaFin || '' %>" style="max-width:130px;" onchange="document.getElementById('filtrosForm').submit()">
+        <input type="date" name="fechaFin" class="form-control" value="<%= req.query.fechaFin || '' %>" onchange="document.getElementById('filtrosForm').submit()">
       </span>
     </div>
 
-    <div class="d-flex align-items-center flex-wrap gap-1">
-      <span class="fw-bold me-1">Ordenar:</span>
+    <!-- Ordenar por -->
+    <div>
+      <span class="fw-bold me-2">Ordenar:</span>
       <select name="orden" class="form-select form-select-sm d-inline-block w-auto" onchange="document.getElementById('filtrosForm').submit()">
         <option value="">--</option>
         <option value="precio_asc" <%= req.query.orden === 'precio_asc' ? 'selected' : '' %>>Precio ↑</option>
@@ -115,13 +120,13 @@ function formatFecha(fecha) {
           </span>
         </td>
         <td>
-          <span class="badge" style="background-color: <%= trabajo.urgencia ? trabajo.urgencia.color : '#ccc' %>">
-            <%= trabajo.urgencia ? trabajo.urgencia.nombre : '' %>
+          <span class="badge <%= urgenciaColor(trabajo.urgencia, trabajo.fechaEntrega) %>">
+            <%= trabajo.urgencia %>
           </span>
         </td>
         <td>$<%= trabajo.precio %></td>
-        <td><%= formatFecha(trabajo.fechaIngreso) %></td>
-        <td><%= formatFecha(trabajo.fechaEntrega) %></td>
+        <td><%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toLocaleDateString() : '' %></td>
+        <td><%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toLocaleDateString() : '' %></td>
         <td>
           <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
             <i class="bi bi-pencil"></i>

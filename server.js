@@ -50,6 +50,7 @@ app.use('/trabajos', require('./src/routes/trabajos'));
 app.use('/categorias', require('./src/routes/categorias'));
 app.use('/estados', require('./src/routes/estados'));
 app.use('/usuarios', require('./src/routes/usuarios'));
+app.use('/urgencias', require('./src/routes/urgencias'));
 
 // 404
 app.use((req, res) => {
