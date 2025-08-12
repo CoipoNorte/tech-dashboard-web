@@ -1,0 +1,35 @@
+<%- include('../partials/header') %>
+<div class="container mt-4">
+  <h2>Trabajos</h2>
+  <a href="/trabajos/nuevo" class="btn btn-primary mb-2">Nuevo Trabajo</a>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Descripción</th>
+        <th>Estado</th>
+        <th>Precio</th>
+        <th>Ingreso</th>
+        <th>Entrega</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% trabajos.forEach(trabajo => { %>
+        <tr>
+          <td><%= trabajo.cliente ? trabajo.cliente.nombre : '' %></td>
+          <td><%= trabajo.descripcion %></td>
+          <td><%= trabajo.estado %></td>
+          <td>$<%= trabajo.precio %></td>
+          <td><%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toLocaleDateString() : '' %></td>
+          <td><%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toLocaleDateString() : '' %></td>
+          <td>
+            <a href="/trabajos/editar/<%= trabajo._id %>" class="btn btn-sm btn-warning">Editar</a>
+            <a href="/trabajos/eliminar/<%= trabajo._id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar trabajo?')">Eliminar</a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

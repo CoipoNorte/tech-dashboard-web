@@ -1,0 +1,46 @@
+# Node modules
+node_modules/
+
+# Dependencias nativas de Electron
+dist/
+build/
+out/
+
+# Archivos de logs y temporales
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Archivos de entorno y credenciales
+.env
+.env.*
+token.json
+credentials.json
+correo.txt
+
+# Base de datos y archivos temporales
+uploads/
+data/
+*.db
+*.sqlite
+
+# Archivos de build de Electron
+*.exe
+*.dmg
+*.app
+*.asar
+
+# Archivos de VSCode y editores
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de backup
+*.bak
+*.tmp

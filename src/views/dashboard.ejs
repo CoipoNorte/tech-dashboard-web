@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+<div class="container mt-4">
+  <h1>Bienvenido, <%= user.username %></h1>
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="card text-bg-primary mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Clientes</h5>
+          <p class="card-text fs-2"><%= typeof clientesCount !== 'undefined' ? clientesCount : '' %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-bg-success mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Trabajos Pendientes</h5>
+          <p class="card-text fs-2"><%= typeof trabajosPendientes !== 'undefined' ? trabajosPendientes : '' %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-bg-warning mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Trabajos Listos</h5>
+          <p class="card-text fs-2"><%= typeof trabajosListos !== 'undefined' ? trabajosListos : '' %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('partials/footer') %>
