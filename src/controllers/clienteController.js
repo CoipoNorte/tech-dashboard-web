@@ -23,7 +23,8 @@ exports.crear = async (req, res) => {
 
 exports.detalle = async (req, res) => {
   const cliente = await Cliente.findById(req.params.id);
-  const trabajos = await Trabajo.find({ cliente: cliente._id }).populate('categoria estado');
+  const trabajos = await Trabajo.find({ cliente: cliente._id })
+    .populate('categoria estado urgencia');
   res.render('clientes/detalle', { title: 'Detalle Cliente', cliente, trabajos });
 };
 
