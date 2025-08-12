@@ -4,55 +4,141 @@
 <p><strong>Email:</strong> <%= cliente.email %></p>
 <p><strong>Dirección:</strong> <%= cliente.direccion %></p>
 <p><strong>Observaciones:</strong> <%= cliente.observaciones %></p>
-<a href="/trabajos/nuevo?cliente=<%= cliente._id %>" class="btn btn-success mb-3"><i class="bi bi-plus-circle"></i> Nuevo Trabajo para este cliente</a>
+<a href="/trabajos/nuevo?cliente=<%= cliente._id %>" class="btn btn-success mb-3">
+  <i class="bi bi-plus-circle"></i> Nuevo Trabajo para este cliente
+</a>
 <h3>Trabajos</h3>
-<table class="table table-bordered align-middle">
-  <thead>
-    <tr>
-      <th>Descripción</th>
-      <th>Categoría</th>
-      <th>Precio</th>
-      <th>Ingreso</th>
-      <th>Entrega</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
+
+<!-- Tabla responsiva en escritorio -->
+<div class="d-none d-lg-block">
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Ingreso</th>
+          <th>Entrega</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% trabajos.forEach(trabajo => { %>
+          <tr>
+            <td>
+              <a href="/trabajos/<%= trabajo._id %>" class="fw-bold text-dark text-decoration-none enlace-lupa">
+                <i class="bi bi-search"></i> <%= trabajo.descripcion %>
+              </a>
+            </td>
+            <td>
+              <div class="d-flex align-items-center justify-content-between">
+                <% if (trabajo.categoria && trabajo.categoria.icono) { %>
+                  <i class="<%= trabajo.categoria.icono %> me-2"
+                    style="font-size:1.3rem; color:<%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#6c757d' %>;">
+                  </i>
+                <% } %>
+                <span class="flex-grow-1 d-flex align-items-center justify-content-between">
+                  <span><%= trabajo.categoria ? trabajo.categoria.nombre : '' %></span>
+                  <% if (trabajo.estado && trabajo.estado.icono) { %>
+                    <i class="<%= trabajo.estado.icono %> ms-2"
+                      style="font-size:0.9rem; color:<%= trabajo.estado.color %>;">
+                    </i>
+                  <% } %>
+                </span>
+              </div>
+            </td>
+            <td>$<%= trabajo.precio %></td>
+            <td><%= trabajo.fechaIngreso ? new Date(trabajo.fechaIngreso).toLocaleDateString('es-ES') : '' %></td>
+            <td>
+              <span class="d-flex align-items-center justify-content-between"
+                style="background-color: #f8f9fa; border-radius: 0.5rem; padding: 0.2rem 0.5rem;">
+                <span>
+                  <%= trabajo.fechaEntrega ? new Date(trabajo.fechaEntrega).toLocaleDateString('es-ES') : '' %>
+                </span>
+                <% if (trabajo.urgencia) { %>
+                  <i class="<%= trabajo.urgencia.icono || 'bi bi-exclamation-circle-fill' %>"
+                    style="color: <%= trabajo.urgencia.color %>; font-size:1.3rem; margin-left:8px"></i>
+                <% } %>
+              </span>
+            </td>
+            <td>
+              <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <form action="/trabajos/<%= trabajo._id %>/eliminar" method="post" style="display:inline;">
+                <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar trabajo?')" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Cards en móvil -->
+<div class="d-lg-none">
+  <div class="row g-3">
     <% trabajos.forEach(trabajo => { %>
-      <tr>
-        <td>
-          <a href="/trabajos/<%= trabajo._id %>"><%= trabajo.descripcion %></a>
-        </td>
-        <td>
-          <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
-                style="background-color: <%= trabajo.estado ? trabajo.estado.color : '#ccc' %>; width:2.2rem; height:2.2rem;">
-            <i class="<%= trabajo.categoria && trabajo.categoria.icono ? trabajo.categoria.icono : 'bi bi-tag' %>" style="font-size:1.2rem; color:#fff"></i>
-          </span>
-          <span class="ms-2"><%= trabajo.categoria ? trabajo.categoria.nombre : '' %></span>
-        </td>
-        <td>$<%= trabajo.precio %></td>
-        <td><%= trabajo.fechaIngreso ? new Date(trabajo.fechaIngreso).toLocaleDateString('es-ES') : '' %></td>
-        <td>
-          <span class="d-flex align-items-center justify-content-between" style="background-color: #f8f9fa; border-radius: 0.5rem; padding: 0.2rem 0.5rem;">
-            <span><%= trabajo.fechaEntrega ? new Date(trabajo.fechaEntrega).toLocaleDateString('es-ES') : '' %></span>
-            <% if (trabajo.urgencia) { %>
-              <i class="<%= trabajo.urgencia.icono || 'bi bi-exclamation-circle-fill' %>"
-                 style="color: <%= trabajo.urgencia.color %>; font-size:1.3rem; margin-left:8px"></i>
-            <% } %>
-          </span>
-        </td>
-        <td>
-          <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
-            <i class="bi bi-pencil"></i>
-          </a>
-          <form action="/trabajos/<%= trabajo._id %>/eliminar" method="post" style="display:inline;">
-            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar trabajo?')" title="Eliminar">
-              <i class="bi bi-trash"></i>
-            </button>
-          </form>
-        </td>
-      </tr>
+      <div class="col-12">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-2">
+              <% if (trabajo.categoria && trabajo.categoria.icono) { %>
+                <i class="<%= trabajo.categoria.icono %> me-2"
+                  style="font-size:1.3rem; color:<%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#6c757d' %>;">
+                </i>
+              <% } %>
+              <div>
+                <a href="/trabajos/<%= trabajo._id %>" class="fw-bold text-dark text-decoration-none enlace-lupa" style="cursor:pointer;">
+                  <i class="bi bi-search"></i> <%= trabajo.descripcion %>
+                </a>
+                <div class="small text-muted d-flex align-items-center">
+                  <span><%= trabajo.categoria ? trabajo.categoria.nombre : '' %></span>
+                  <% if (trabajo.estado && trabajo.estado.icono) { %>
+                    <i class="<%= trabajo.estado.icono %> ms-2"
+                      style="font-size:0.9rem; color:<%= trabajo.estado.color %>;">
+                    </i>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <span class="badge"
+                style="background-color: <%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#ccc' %>; color: #fff;">
+                <i class="<%= trabajo.estado && trabajo.estado.icono ? trabajo.estado.icono : 'bi bi-flag' %>"></i>
+                <%= trabajo.estado ? trabajo.estado.nombre : '' %>
+              </span>
+              <span class="badge ms-2"
+                style="background-color: <%= trabajo.urgencia && trabajo.urgencia.color ? trabajo.urgencia.color : '#ccc' %>; color: #fff;">
+                <i class="<%= trabajo.urgencia && trabajo.urgencia.icono ? trabajo.urgencia.icono : 'bi bi-exclamation-circle-fill' %>"></i>
+                <%= trabajo.urgencia ? trabajo.urgencia.nombre : '' %>
+              </span>
+              <span class="badge ms-2 bg-secondary">
+                <i class="bi bi-cash-coin"></i> $<%= trabajo.precio %>
+              </span>
+            </div>
+            <div class="mb-2">
+              <strong>Ingreso:</strong> <%= trabajo.fechaIngreso ? new Date(trabajo.fechaIngreso).toLocaleDateString('es-ES') : '' %>
+              <span class="ms-2"><strong>Entrega:</strong> <%= trabajo.fechaEntrega ? new Date(trabajo.fechaEntrega).toLocaleDateString('es-ES') : '' %></span>
+            </div>
+            <div class="d-flex gap-2 mt-2">
+              <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary w-100" title="Editar">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <form action="/trabajos/<%= trabajo._id %>/eliminar" method="post" style="display:inline; width:100%;">
+                <button class="btn btn-sm btn-danger w-100" onclick="return confirm('¿Eliminar trabajo?')" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     <% }) %>
-  </tbody>
-</table>
+  </div>
+</div>
 <%- include('../partials/footer') %>

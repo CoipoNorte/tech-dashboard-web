@@ -1,33 +1,40 @@
 <%- include('../partials/header', { title }) %>
 <h1>Urgencias</h1>
 <a href="/urgencias/nuevo" class="btn btn-success mb-3"><i class="bi bi-plus-circle"></i> Nueva Urgencia</a>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Color</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% urgencias.forEach(urg => { %>
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
       <tr>
-        <td><%= urg.nombre %></td>
-        <td>
-          <span class="badge" style="background-color: <%= urg.color %>"><%= urg.color %></span>
-        </td>
-        <td>
-          <a href="/urgencias/<%= urg._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
-            <i class="bi bi-pencil"></i>
-          </a>
-          <form action="/urgencias/<%= urg._id %>/eliminar" method="post" style="display:inline;">
-            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar urgencia?')" title="Eliminar">
-              <i class="bi bi-trash"></i>
-            </button>
-          </form>
-        </td>
+        <th>Nombre</th>
+        <th>Color</th>
+        <th>Icono</th>
+        <th>Acciones</th>
       </tr>
-    <% }) %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% urgencias.forEach(urg => { %>
+        <tr>
+          <td><%= urg.nombre %></td>
+          <td>
+            <span class="badge" style="background-color: <%= urg.color %>"><%= urg.color %></span>
+          </td>
+          <td>
+            <i class="<%= urg.icono || 'bi bi-exclamation-circle-fill' %>" style="font-size:1.5rem"></i>
+            <span class="text-muted" style="font-size:0.9rem"><%= urg.icono || 'bi bi-exclamation-circle-fill' %></span>
+          </td>
+          <td>
+            <a href="/urgencias/<%= urg._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <form action="/urgencias/<%= urg._id %>/eliminar" method="post" style="display:inline;">
+              <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar urgencia?')" title="Eliminar">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
 <%- include('../partials/footer') %>

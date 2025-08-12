@@ -104,6 +104,7 @@ app.use('/categorias', require('./src/routes/categorias'));
 app.use('/estados', require('./src/routes/estados'));
 app.use('/usuarios', require('./src/routes/usuarios'));
 app.use('/urgencias', require('./src/routes/urgencias'));
+app.use('/herramientas', require('./src/routes/herramientas'));
 
 // 404
 app.use((req, res) => {

@@ -1,77 +1,112 @@
 <%- include('../partials/header', { title }) %>
-<div class="row justify-content-center">
-  <div class="col-lg-8">
-    <div class="card shadow mb-4">
-      <div class="card-body">
-        <div class="d-flex align-items-center mb-3">
-          <span class="d-inline-flex align-items-center justify-content-center rounded-circle me-3"
-                style="background-color: <%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#ccc' %>; width:3rem; height:3rem;">
-            <i class="<%= trabajo.categoria && trabajo.categoria.icono ? trabajo.categoria.icono : 'bi bi-tag' %>" style="font-size:1.7rem; color:#fff"></i>
-          </span>
-          <div>
-            <h2 class="mb-0"><%= trabajo.descripcion %></h2>
-            <div class="text-muted">
-              <i class="bi bi-person"></i> <%= trabajo.cliente ? trabajo.cliente.nombre : '' %>
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow mb-4">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-circle me-3"
+              style="background-color: <%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#ccc' %>; width:3rem; height:3rem;">
+              <i class="<%= trabajo.categoria && trabajo.categoria.icono ? trabajo.categoria.icono : 'bi bi-tag' %>"
+                style="font-size:1.7rem; color:#fff"></i>
+            </span>
+            <div>
+              <h2 class="mb-0">
+                <%= trabajo.descripcion %>
+              </h2>
+              <div class="text-muted">
+                <i class="bi bi-person"></i>
+                <% if (trabajo.cliente) { %>
+                  <a href="/clientes/<%= trabajo.cliente._id %>"
+                    class="fw-bold text-dark text-decoration-none enlace-lupa">
+                    <%= trabajo.cliente.nombre %>
+                  </a>
+                  <% } %>
+              </div>
             </div>
           </div>
-        </div>
-        <hr>
-        <div class="mb-3">
-          <span class="badge" style="background-color: <%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#ccc' %>; color: #fff; font-size:1rem;">
-            <i class="<%= trabajo.estado && trabajo.estado.icono ? trabajo.estado.icono : 'bi bi-flag' %>"></i>
-            <%= trabajo.estado ? trabajo.estado.nombre : '' %>
-          </span>
-          <span class="badge ms-2" style="background-color: <%= trabajo.urgencia && trabajo.urgencia.color ? trabajo.urgencia.color : '#ccc' %>; color: #fff; font-size:1rem;">
-            <i class="<%= trabajo.urgencia && trabajo.urgencia.icono ? trabajo.urgencia.icono : 'bi bi-exclamation-circle-fill' %>"></i>
-            <%= trabajo.urgencia ? trabajo.urgencia.nombre : '' %>
-          </span>
-          <span class="badge ms-2 bg-secondary" style="font-size:1rem;">
-            <i class="bi bi-cash-coin"></i> $<%= trabajo.precio %>
-          </span>
-        </div>
-        <div class="mb-3">
-          <strong><i class="bi bi-calendar-plus"></i> Ingreso:</strong>
-          <%= trabajo.fechaIngreso ? new Date(trabajo.fechaIngreso).toLocaleDateString('es-ES') : '' %>
-          <span class="ms-3"><strong><i class="bi bi-calendar-check"></i> Entrega:</strong>
-          <%= trabajo.fechaEntrega ? new Date(trabajo.fechaEntrega).toLocaleDateString('es-ES') : '' %></span>
-        </div>
-        <div class="mb-3">
-          <strong><i class="bi bi-tags"></i> Categoría:</strong>
-          <%= trabajo.categoria ? trabajo.categoria.nombre : '' %>
-        </div>
-        <div class="mb-3">
-          <strong><i class="bi bi-chat-left-text"></i> Observaciones:</strong>
-          <div class="alert alert-info mt-2" style="white-space: pre-line;"><%= trabajo.observaciones || 'Sin observaciones' %></div>
-        </div>
-        <div class="mb-3">
-          <strong><i class="bi bi-card-text"></i> Descripción:</strong>
-          <div class="alert alert-primary mt-2" style="white-space: pre-line;"><%= trabajo.descripcion %></div>
-        </div>
-        <!-- Lista de nombres de imágenes -->
-        <% if (trabajo.imagenes && trabajo.imagenes.length > 0) { %>
-          <div class="mb-4">
-            <h5>Archivos en Google Drive:</h5>
-            <ul class="list-group">
-              <% trabajo.imagenes.forEach(img => { %>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <span class="small text-muted fw-bold"><%= img.nombre || '' %></span>
-                  <a href="<%= img.url %>" class="btn btn-sm btn-outline-success" title="Ver/Descargar en Drive" target="_blank">
-                    <i class="bi bi-download"></i>
-                  </a>
-                </li>
-              <% }) %>
-            </ul>
+          <hr>
+          <div class="mb-3">
+            <span class="badge"
+              style="background-color: <%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#ccc' %>; color: #fff; font-size:1rem;">
+              <i class="<%= trabajo.estado && trabajo.estado.icono ? trabajo.estado.icono : 'bi bi-flag' %>"></i>
+              <%= trabajo.estado ? trabajo.estado.nombre : '' %>
+            </span>
+            <span class="badge ms-2"
+              style="background-color: <%= trabajo.urgencia && trabajo.urgencia.color ? trabajo.urgencia.color : '#ccc' %>; color: #fff; font-size:1rem;">
+              <i
+                class="<%= trabajo.urgencia && trabajo.urgencia.icono ? trabajo.urgencia.icono : 'bi bi-exclamation-circle-fill' %>"></i>
+              <%= trabajo.urgencia ? trabajo.urgencia.nombre : '' %>
+            </span>
+            <span class="badge ms-2 bg-secondary" style="font-size:1rem;">
+              <i class="bi bi-cash-coin"></i> $<%= trabajo.precio %>
+            </span>
           </div>
-        <% } else { %>
-          <div class="mb-4 text-center text-muted">No hay imágenes en este trabajo.</div>
-        <% } %>
-        <div class="mt-4">
-          <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-primary"><i class="bi bi-pencil"></i> Editar</a>
-          <a href="/trabajos/<%= trabajo._id %>/fotos" class="btn btn-info"><i class="bi bi-images"></i> Gestionar Fotos</a>
-          <a href="/trabajos" class="btn btn-secondary">Volver</a>
+          <div class="mb-3">
+            <strong><i class="bi bi-calendar-plus"></i> Ingreso:</strong>
+            <%= trabajo.fechaIngreso ? new Date(trabajo.fechaIngreso).toLocaleDateString('es-ES') : '' %>
+              <span class="ms-3"><strong><i class="bi bi-calendar-check"></i> Entrega:</strong>
+                <%= trabajo.fechaEntrega ? new Date(trabajo.fechaEntrega).toLocaleDateString('es-ES') : '' %>
+              </span>
+          </div>
+          <div class="mb-3 d-flex align-items-center justify-content-between">
+            <div>
+              <strong><i class="bi bi-tags"></i> Categoría:</strong>
+              <%= trabajo.categoria ? trabajo.categoria.nombre : '' %>
+            </div>
+            <% if (trabajo.categoria && trabajo.categoria.icono) { %>
+              <i class="<%= trabajo.categoria.icono %> ms-2"
+                style="font-size:2rem; color:<%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#6c757d' %>;">
+              </i>
+              <% } %>
+          </div>
+          <div class="mb-3">
+            <strong><i class="bi bi-chat-left-text"></i> Observaciones:</strong>
+            <div class="alert alert-info mt-2" style="white-space: pre-line;">
+              <%= trabajo.observaciones || 'Sin observaciones' %>
+            </div>
+          </div>
+          <div class="mb-3">
+            <strong><i class="bi bi-card-text"></i> Descripción:</strong>
+            <div class="alert alert-primary mt-2" style="white-space: pre-line;">
+              <%= trabajo.descripcion %>
+            </div>
+          </div>
+          <!-- Lista de nombres de imágenes -->
+          <% if (trabajo.imagenes && trabajo.imagenes.length> 0) { %>
+            <div class="mb-4">
+              <h5>Archivos en Google Drive:</h5>
+              <ul class="list-group">
+                <% trabajo.imagenes.forEach(img=> { %>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="small text-muted fw-bold">
+                      <%= img.nombre || '' %>
+                    </span>
+                    <a href="<%= img.url %>" class="btn btn-sm btn-outline-success" title="Ver/Descargar en Drive"
+                      target="_blank">
+                      <i class="bi bi-download"></i>
+                    </a>
+                  </li>
+                  <% }) %>
+              </ul>
+            </div>
+            <% } else { %>
+              <div class="mb-4 text-center text-muted">No hay imágenes en este trabajo.</div>
+              <% } %>
+                <div class="row mt-4 g-2">
+                  <div class="col-12 col-md-4 d-grid">
+                    <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-primary mb-2 mb-md-0"><i
+                        class="bi bi-pencil"></i> Editar</a>
+                  </div>
+                  <div class="col-12 col-md-4 d-grid">
+                    <a href="/trabajos/<%= trabajo._id %>/fotos" class="btn btn-info mb-2 mb-md-0"><i
+                        class="bi bi-images"></i> Gestionar Fotos</a>
+                  </div>
+                  <div class="col-12 col-md-4 d-grid">
+                    <a href="/trabajos" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+                  </div>
+                </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-<%- include('../partials/footer') %>
+  <%- include('../partials/footer') %>

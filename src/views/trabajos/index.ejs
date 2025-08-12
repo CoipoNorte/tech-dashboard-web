@@ -1,145 +1,287 @@
 <%- include('../partials/header', { title }) %>
-<%
-function isActive(param, value) {
-  return (param && param == value) ? 'active' : '';
-}
-function formatFecha(fecha) {
-  if (!fecha) return '';
-  const d = new Date(fecha);
-  return d.toLocaleDateString('es-ES');
-}
-%>
-<h1>Trabajos</h1>
+  <% function isActive(param, value) { return (param && param==value) ? 'active' : '' ; } function formatFecha(fecha) {
+    if (!fecha) return '' ; const d=new Date(fecha); return d.toLocaleDateString('es-ES'); } %>
+    <h1>Trabajos</h1>
 
-<form class="row g-2 mb-3" method="get" id="busquedaForm">
-  <div class="col-12 col-md-8">
-    <div class="input-group">
-      <input type="text" name="q" value="<%= req.query.q || '' %>" class="form-control" placeholder="Buscar por descripción o cliente...">
-      <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
-    </div>
-  </div>
-  <div class="col-12 col-md-4 text-end">
-    <a href="/trabajos/nuevo" class="btn btn-success w-100 w-md-auto"><i class="bi bi-plus-circle"></i> Nuevo Trabajo</a>
-  </div>
-</form>
-
-<form class="mb-3" method="get" id="filtrosForm">
-  <input type="hidden" name="q" value="<%= req.query.q || '' %>">
-  <div class="d-flex flex-wrap align-items-center gap-3 mb-4" style="row-gap: 1.2rem;">
-    <!-- Filtro de Categoría con iconos -->
-    <div class="d-flex align-items-center flex-wrap gap-2">
-      <span class="fw-bold me-1">Categoría:</span>
-      <a href="/trabajos?<%= new URLSearchParams({ ...req.query, categoria: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.categoria ? 'active' : '' %>" title="Todas"><i class="bi bi-tags"></i></a>
-      <% categorias.forEach(cat => { %>
-        <a href="/trabajos?<%= new URLSearchParams({ ...req.query, categoria: cat._id }).toString() %>" class="btn btn-outline-primary btn-sm <%= isActive(req.query.categoria, cat._id) %>" title="<%= cat.nombre %>">
-          <i class="<%= cat.icono || 'bi bi-tag' %>"></i> <%= cat.nombre %>
-        </a>
-      <% }) %>
+    <!-- Barra de búsqueda y botón nuevo trabajo -->
+    <div class="row mb-3">
+      <div class="col-12 col-md-8 mb-2 mb-md-0">
+        <div class="card shadow-sm">
+          <div class="card-body p-2">
+            <form class="input-group" method="get" id="busquedaForm">
+              <input type="text" name="q" value="<%= req.query.q || '' %>" class="form-control"
+                placeholder="Buscar por descripción o cliente...">
+              <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 text-end">
+        <a href="/trabajos/nuevo" class="btn btn-success w-100 w-md-auto"><i class="bi bi-plus-circle"></i> Nuevo
+          Trabajo</a>
+      </div>
     </div>
 
-    <!-- Filtro de Estado con iconos -->
-    <div class="d-flex align-items-center flex-wrap gap-2">
-      <span class="fw-bold me-1">Estado:</span>
-      <a href="/trabajos?<%= new URLSearchParams({ ...req.query, estado: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.estado ? 'active' : '' %>" title="Todos"><i class="bi bi-flag"></i></a>
-      <% estados.forEach(est => { %>
-        <a href="/trabajos?<%= new URLSearchParams({ ...req.query, estado: est._id }).toString() %>" class="btn btn-sm <%= isActive(req.query.estado, est._id) %>" style="background-color:<%= est.color %>; color:#fff;" title="<%= est.nombre %>">
-          <i class="<%= est.icono || 'bi bi-flag' %>"></i> <%= est.nombre %>
-        </a>
-      <% }) %>
+    <!-- Filtros en card -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body p-2">
+        <form class="mb-0" method="get" id="filtrosForm">
+          <input type="hidden" name="q" value="<%= req.query.q || '' %>">
+          <div class="d-flex flex-wrap align-items-center gap-3" style="row-gap: 1.2rem;">
+            <!-- Filtro de Categoría con iconos -->
+            <div class="d-flex align-items-center flex-wrap gap-2">
+              <span class="fw-bold me-1">Categoría:</span>
+              <a href="/trabajos?<%= new URLSearchParams({ ...req.query, categoria: '' }).toString() %>"
+                class="btn btn-outline-secondary btn-sm <%= !req.query.categoria ? 'active' : '' %>" title="Todas"><i
+                  class="bi bi-tags"></i></a>
+              <% categorias.forEach(cat=> { %>
+                <a href="/trabajos?<%= new URLSearchParams({ ...req.query, categoria: cat._id }).toString() %>"
+                  class="btn btn-outline-primary btn-sm <%= isActive(req.query.categoria, cat._id) %>"
+                  title="<%= cat.nombre %>">
+                  <i class="<%= cat.icono || 'bi bi-tag' %>"></i>
+                  <%= cat.nombre %>
+                </a>
+                <% }) %>
+            </div>
+            <!-- Filtro de Estado con iconos -->
+            <div class="d-flex align-items-center flex-wrap gap-2">
+              <span class="fw-bold me-1">Estado:</span>
+              <a href="/trabajos?<%= new URLSearchParams({ ...req.query, estado: '' }).toString() %>"
+                class="btn btn-outline-secondary btn-sm <%= !req.query.estado ? 'active' : '' %>" title="Todos"><i
+                  class="bi bi-flag"></i></a>
+              <% estados.forEach(est=> { %>
+                <a href="/trabajos?<%= new URLSearchParams({ ...req.query, estado: est._id }).toString() %>"
+                  class="btn btn-sm <%= isActive(req.query.estado, est._id) %>"
+                  style="background-color:<%= est.color %>; color:#fff;" title="<%= est.nombre %>">
+                  <i class="<%= est.icono || 'bi bi-flag' %>"></i>
+                  <%= est.nombre %>
+                </a>
+                <% }) %>
+            </div>
+            <!-- Filtro de Urgencia -->
+            <div class="d-flex align-items-center flex-wrap gap-2">
+              <span class="fw-bold me-1">Urgencia:</span>
+              <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: '' }).toString() %>"
+                class="btn btn-outline-secondary btn-sm <%= !req.query.urgencia ? 'active' : '' %>" title="Todas"><i
+                  class="bi bi-exclamation-circle"></i></a>
+              <% urgencias.forEach(urg=> { %>
+                <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: urg._id }).toString() %>"
+                  class="btn btn-sm <%= isActive(req.query.urgencia, urg._id) %>"
+                  style="background-color:<%= urg.color %>; color:#fff;" title="<%= urg.nombre %>">
+                  <i class="bi bi-exclamation-circle-fill"></i>
+                  <%= urg.nombre %>
+                </a>
+                <% }) %>
+            </div>
+            <!-- Filtro de Fechas -->
+            <div class="d-flex align-items-center flex-wrap gap-2">
+              <span class="fw-bold me-1">Fechas:</span>
+              <span class="input-group input-group-sm" style="width:auto;">
+                <button type="button" class="btn btn-outline-secondary"
+                  onclick="document.getElementById('fechaInicio').showPicker()">
+                  <i class="bi bi-calendar-date"></i>
+                </button>
+                <input type="date" id="fechaInicio" name="fechaInicio" class="form-control"
+                  value="<%= req.query.fechaInicio || '' %>" style="max-width:130px;"
+                  onchange="document.getElementById('filtrosForm').submit()">
+                <span class="input-group-text"><i class="bi bi-arrow-right"></i></span>
+                <button type="button" class="btn btn-outline-secondary"
+                  onclick="document.getElementById('fechaFin').showPicker()">
+                  <i class="bi bi-calendar-date"></i>
+                </button>
+                <input type="date" id="fechaFin" name="fechaFin" class="form-control"
+                  value="<%= req.query.fechaFin || '' %>" style="max-width:130px;"
+                  onchange="document.getElementById('filtrosForm').submit()">
+              </span>
+            </div>
+            <!-- Ordenar por -->
+            <div class="d-flex align-items-center flex-wrap gap-2">
+              <span class="fw-bold me-1">Ordenar:</span>
+              <select name="orden" class="form-select form-select-sm d-inline-block w-auto"
+                onchange="document.getElementById('filtrosForm').submit()">
+                <option value="">--</option>
+                <option value="precio_asc" <%=req.query.orden==='precio_asc' ? 'selected' : '' %>>Precio ↑</option>
+                <option value="precio_desc" <%=req.query.orden==='precio_desc' ? 'selected' : '' %>>Precio ↓</option>
+                <option value="fechaIngreso_asc" <%=req.query.orden==='fechaIngreso_asc' ? 'selected' : '' %>>Ingreso ↑
+                </option>
+                <option value="fechaIngreso_desc" <%=req.query.orden==='fechaIngreso_desc' ? 'selected' : '' %>>Ingreso
+                  ↓</option>
+                <option value="fechaEntrega_asc" <%=req.query.orden==='fechaEntrega_asc' ? 'selected' : '' %>>Entrega ↑
+                </option>
+                <option value="fechaEntrega_desc" <%=req.query.orden==='fechaEntrega_desc' ? 'selected' : '' %>>Entrega
+                  ↓</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <!-- Filtro de Urgencia -->
-    <div class="d-flex align-items-center flex-wrap gap-2">
-      <span class="fw-bold me-1">Urgencia:</span>
-      <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.urgencia ? 'active' : '' %>" title="Todas"><i class="bi bi-exclamation-circle"></i></a>
-      <% urgencias.forEach(urg => { %>
-        <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: urg._id }).toString() %>" class="btn btn-sm <%= isActive(req.query.urgencia, urg._id) %>" style="background-color:<%= urg.color %>; color:#fff;" title="<%= urg.nombre %>">
-          <i class="bi bi-exclamation-circle-fill"></i> <%= urg.nombre %>
-        </a>
-      <% }) %>
+    <!-- Tabla responsiva en escritorio, cards en móvil -->
+    <div class="d-none d-lg-block">
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Cliente</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Ingreso</th>
+              <th>Entrega</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% trabajos.forEach(trabajo=> { %>
+              <tr>
+                <td>
+                  <a href="/trabajos/<%= trabajo._id %>" class="fw-bold text-dark text-decoration-none enlace-lupa"
+                    style="cursor:pointer;">
+                    <%= trabajo.descripcion %>
+                  </a>
+                </td>
+                <td>
+                  <% if (trabajo.cliente) { %>
+                    <a href="/clientes/<%= trabajo.cliente._id %>"
+                      class="fw-bold text-dark text-decoration-none enlace-lupa" style="cursor:pointer;">
+                      <i class="bi bi-search"></i>
+                      <%= trabajo.cliente.nombre %>
+                    </a>
+                    <% } %>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <!-- Icono de categoría a la izquierda -->
+                    <% if (trabajo.categoria && trabajo.categoria.icono) { %>
+                      <i class="<%= trabajo.categoria.icono %> me-2"
+                        style="font-size:1.3rem; color:<%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#6c757d' %>;">
+                      </i>
+                      <% } %>
+                        <!-- Nombre de la categoría y el icono de estado a la derecha -->
+                        <span class="flex-grow-1">
+                          <%= trabajo.categoria ? trabajo.categoria.nombre : '' %>
+                            <% if (trabajo.estado && trabajo.estado.icono) { %>
+                              <span class="ms-2 align-middle">
+                                <i class="<%= trabajo.estado.icono %>"
+                                  style="font-size:0.9rem; color:<%= trabajo.estado.color %>;">
+                                </i>
+                              </span>
+                              <% } %>
+                        </span>
+                  </div>
+                </td>
+                <td>$<%= trabajo.precio %>
+                </td>
+                <td>
+                  <%= formatFecha(trabajo.fechaIngreso) %>
+                </td>
+                <td>
+                  <span class="d-flex align-items-center justify-content-between"
+                    style="background-color: #f8f9fa; border-radius: 0.5rem; padding: 0.2rem 0.5rem;">
+                    <span>
+                      <%= formatFecha(trabajo.fechaEntrega) %>
+                    </span>
+                    <% if (trabajo.urgencia) { %>
+                      <i class="<%= trabajo.urgencia.icono || 'bi bi-exclamation-circle-fill' %>"
+                        style="color: <%= trabajo.urgencia.color %>; font-size:1.3rem; margin-left:8px"></i>
+                      <% } %>
+                  </span>
+                </td>
+                <td>
+                  <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <form action="/trabajos/<%= trabajo._id %>/eliminar" method="post" style="display:inline;">
+                    <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar trabajo?')"
+                      title="Eliminar">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Filtro de Fechas -->
-    <div class="d-flex align-items-center flex-wrap gap-2">
-      <span class="fw-bold me-1">Fechas:</span>
-      <span class="input-group input-group-sm" style="width:auto;">
-        <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fechaInicio').showPicker()">
-          <i class="bi bi-calendar-date"></i>
-        </button>
-        <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" value="<%= req.query.fechaInicio || '' %>" style="max-width:130px;" onchange="document.getElementById('filtrosForm').submit()">
-        <span class="input-group-text"><i class="bi bi-arrow-right"></i></span>
-        <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fechaFin').showPicker()">
-          <i class="bi bi-calendar-date"></i>
-        </button>
-        <input type="date" id="fechaFin" name="fechaFin" class="form-control" value="<%= req.query.fechaFin || '' %>" style="max-width:130px;" onchange="document.getElementById('filtrosForm').submit()">
-      </span>
+    <!-- Cards en móvil -->
+    <div class="d-lg-none">
+      <div class="row g-3">
+        <% trabajos.forEach(trabajo=> { %>
+          <div class="col-12">
+            <div class="card shadow-sm border-0">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-2">
+                  <span class="d-inline-flex align-items-center justify-content-center rounded-circle me-2"
+                    style="background-color: <%= trabajo.estado ? trabajo.estado.color : '#ccc' %>; width:2.2rem; height:2.2rem;">
+                    <i class="<%= trabajo.categoria && trabajo.categoria.icono ? trabajo.categoria.icono : 'bi bi-tag' %>"
+                      style="font-size:1.2rem; color:#fff"></i>
+                  </span>
+                  <div>
+                    <a href="/trabajos/<%= trabajo._id %>" class="fw-bold text-dark text-decoration-none enlace-lupa"
+                      style="cursor:pointer;">
+                      <%= trabajo.descripcion %>
+                    </a>
+                    <div class="small text-muted">
+                      <% if (trabajo.cliente) { %>
+                        <a href="/clientes/<%= trabajo.cliente._id %>"
+                          class="fw-bold text-dark text-decoration-none enlace-lupa" style="cursor:pointer;">
+                          <i class="bi bi-search"></i>
+                          <%= trabajo.cliente.nombre %>
+                        </a>
+                        <% } %>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-2">
+                  <span class="badge"
+                    style="background-color: <%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#ccc' %>; color: #fff;">
+                    <i class="<%= trabajo.estado && trabajo.estado.icono ? trabajo.estado.icono : 'bi bi-flag' %>"></i>
+                    <%= trabajo.estado ? trabajo.estado.nombre : '' %>
+                  </span>
+                  <span class="badge ms-2"
+                    style="background-color: <%= trabajo.urgencia && trabajo.urgencia.color ? trabajo.urgencia.color : '#ccc' %>; color: #fff;">
+                    <i
+                      class="<%= trabajo.urgencia && trabajo.urgencia.icono ? trabajo.urgencia.icono : 'bi bi-exclamation-circle-fill' %>"></i>
+                    <%= trabajo.urgencia ? trabajo.urgencia.nombre : '' %>
+                  </span>
+                  <span class="badge ms-2 bg-secondary">
+                    <i class="bi bi-cash-coin"></i> $<%= trabajo.precio %>
+                  </span>
+                </div>
+                <div class="mb-2">
+                  <strong>Ingreso:</strong>
+                  <%= formatFecha(trabajo.fechaIngreso) %>
+                    <span class="ms-2"><strong>Entrega:</strong>
+                      <%= formatFecha(trabajo.fechaEntrega) %>
+                    </span>
+                </div>
+                <div class="mb-2">
+                  <strong>Categoría:</strong>
+                  <%= trabajo.categoria ? trabajo.categoria.nombre : '' %>
+                    <% if (trabajo.categoria && trabajo.categoria.icono) { %>
+                      <i class="<%= trabajo.estado.icono %> ms-2"
+                        style="font-size:1.2rem; color:<%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#6c757d' %>;"></i>
+                      <% } %>
+                </div>
+                <div class="d-flex gap-2 mt-2">
+                  <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary w-100" title="Editar">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <form action="/trabajos/<%= trabajo._id %>/eliminar" method="post"
+                    style="display:inline; width:100%;">
+                    <button class="btn btn-sm btn-danger w-100" onclick="return confirm('¿Eliminar trabajo?')"
+                      title="Eliminar">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+      </div>
     </div>
-
-    <!-- Ordenar por -->
-    <div class="d-flex align-items-center flex-wrap gap-2">
-      <span class="fw-bold me-1">Ordenar:</span>
-      <select name="orden" class="form-select form-select-sm d-inline-block w-auto" onchange="document.getElementById('filtrosForm').submit()">
-        <option value="">--</option>
-        <option value="precio_asc" <%= req.query.orden === 'precio_asc' ? 'selected' : '' %>>Precio ↑</option>
-        <option value="precio_desc" <%= req.query.orden === 'precio_desc' ? 'selected' : '' %>>Precio ↓</option>
-        <option value="fechaIngreso_asc" <%= req.query.orden === 'fechaIngreso_asc' ? 'selected' : '' %>>Ingreso ↑</option>
-        <option value="fechaIngreso_desc" <%= req.query.orden === 'fechaIngreso_desc' ? 'selected' : '' %>>Ingreso ↓</option>
-        <option value="fechaEntrega_asc" <%= req.query.orden === 'fechaEntrega_asc' ? 'selected' : '' %>>Entrega ↑</option>
-        <option value="fechaEntrega_desc" <%= req.query.orden === 'fechaEntrega_desc' ? 'selected' : '' %>>Entrega ↓</option>
-      </select>
-    </div>
-  </div>
-</form>
-
-<table class="table table-striped align-middle">
-  <thead>
-    <tr>
-      <th>Descripción</th>
-      <th>Cliente</th>
-      <th>Categoría</th>
-      <th>Precio</th>
-      <th>Ingreso</th>
-      <th>Entrega</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% trabajos.forEach(trabajo => { %>
-      <tr>
-        <td>
-          <a href="/trabajos/<%= trabajo._id %>"><%= trabajo.descripcion %></a>
-        </td>
-        <td><%= trabajo.cliente ? trabajo.cliente.nombre : '' %></td>
-        <td>
-          <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
-                style="background-color: <%= trabajo.estado ? trabajo.estado.color : '#ccc' %>; width:2.2rem; height:2.2rem;">
-            <i class="<%= trabajo.categoria && trabajo.categoria.icono ? trabajo.categoria.icono : 'bi bi-tag' %>" style="font-size:1.2rem; color:#fff"></i>
-          </span>
-          <span class="ms-2"><%= trabajo.categoria ? trabajo.categoria.nombre : '' %></span>
-        </td>
-        <td>$<%= trabajo.precio %></td>
-        <td><%= formatFecha(trabajo.fechaIngreso) %></td>
-        <td>
-          <span class="d-flex align-items-center justify-content-between" style="background-color: #f8f9fa; border-radius: 0.5rem; padding: 0.2rem 0.5rem;">
-            <span><%= formatFecha(trabajo.fechaEntrega) %></span>
-            <% if (trabajo.urgencia) { %>
-              <i class="<%= trabajo.urgencia.icono || 'bi bi-exclamation-circle-fill' %>"
-                 style="color: <%= trabajo.urgencia.color %>; font-size:1.3rem; margin-left:8px"></i>
-            <% } %>
-          </span>
-        </td>
-        <td>
-          <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
-            <i class="bi bi-pencil"></i>
-          </a>
-          <form action="/trabajos/<%= trabajo._id %>/eliminar" method="post" style="display:inline;">
-            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar trabajo?')" title="Eliminar">
-              <i class="bi bi-trash"></i>
-            </button>
-          </form>
-        </td>
-      </tr>
-    <% }) %>
-  </tbody>
-</table>
-<%- include('../partials/footer') %>
+    <%- include('../partials/footer') %>

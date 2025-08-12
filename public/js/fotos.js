@@ -6,11 +6,11 @@ function confirmarEliminarImg(driveId) {
   modal.show();
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Eliminar imagen confirmada
   const btnEliminar = document.getElementById('btnEliminarConfirmado');
   if (btnEliminar) {
-    btnEliminar.addEventListener('click', function() {
+    btnEliminar.addEventListener('click', function () {
       if (!driveIdAEliminar) return;
       hideConfirmModal();
       showLoader('Eliminando imagen...');
@@ -19,25 +19,26 @@ document.addEventListener('DOMContentLoaded', function() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ driveId: driveIdAEliminar })
       })
-      .then(res => res.json())
-      .then(data => {
-        hideLoader();
-        if (data.ok) {
-          const card = document.getElementById('cardImg' + driveIdAEliminar);
-          if (card) card.remove();
-          showAlert('Imagen eliminada correctamente.', 'success');
-        } else {
-          showAlert('Error al eliminar la imagen.', 'danger');
-        }
-        driveIdAEliminar = null;
-      });
+        .then(res => res.json())
+        .then(data => {
+          hideLoader();
+          if (data.ok) {
+            const card = document.getElementById('cardImg' + driveIdAEliminar);
+            if (card) card.remove();
+            showAlert('Imagen eliminada correctamente.', 'success');
+            setTimeout(() => { location.reload(); }, 1200); // Recarga la página después de 1.2 segundos
+          } else {
+            showAlert('Error al eliminar la imagen.', 'danger');
+          }
+          driveIdAEliminar = null;
+        });
     });
   }
 
   // Subir nuevas imágenes
   const inputFotos = document.getElementById('inputFotos');
   if (inputFotos) {
-    inputFotos.addEventListener('change', function() {
+    inputFotos.addEventListener('change', function () {
       const formData = new FormData();
       for (const file of this.files) {
         formData.append('imagenes', file);
@@ -47,35 +48,48 @@ document.addEventListener('DOMContentLoaded', function() {
         method: 'POST',
         body: formData
       })
-      .then(res => res.json())
-      .then(data => {
-        hideLoader();
-        showAlert('Imagen(es) subida(s) correctamente.', 'success');
-        setTimeout(() => { location.reload(); }, 1200);
-      });
+        .then(res => res.json())
+        .then(data => {
+          hideLoader();
+          showAlert('Imagen(es) subida(s) correctamente.', 'success');
+          setTimeout(() => { location.reload(); }, 1200);
+        });
     });
   }
 
   // Confirmar eliminación de carpeta
   const btnEliminarCarpeta = document.getElementById('btnEliminarCarpetaConfirmado');
   if (btnEliminarCarpeta) {
-    btnEliminarCarpeta.addEventListener('click', function() {
+    btnEliminarCarpeta.addEventListener('click', function () {
       hideConfirmModalCarpeta();
       showLoader('Eliminando carpeta y fotos...');
       fetch(window.location.pathname + '/eliminar-carpeta', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
-      .then(res => res.json())
-      .then(data => {
-        hideLoader();
-        if (data.ok) {
-          showAlert('Carpeta y fotos eliminadas correctamente.', 'success');
-          setTimeout(() => { location.reload(); }, 1200);
-        } else {
-          showAlert('Error al eliminar la carpeta.', 'danger');
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          hideLoader();
+          if (data.ok) {
+            showAlert('Carpeta y fotos eliminadas correctamente.', 'success');
+            setTimeout(() => { location.reload(); }, 1200);
+          } else {
+            showAlert('Error al eliminar la carpeta.', 'danger');
+          }
+        });
+    });
+  }
+
+  // Permitir confirmar el cambio de nombre con Enter
+  const inputNombre = document.getElementById('inputNuevoNombre');
+  if (inputNombre) {
+    inputNombre.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        aplicarNombre();
+        var modal = bootstrap.Modal.getInstance(document.getElementById('modalNombre'));
+        if (modal) modal.hide();
+      }
     });
   }
 });
@@ -92,29 +106,29 @@ function hideConfirmModalCarpeta() {
 }
 function abrirModalNombre(driveId, nombre) {
   document.getElementById('inputDriveId').value = driveId;
-  document.getElementById('inputNuevoNombre').value = nombre || '';
+  document.getElementById('inputNuevoNombre').value = (nombre || '').trim();
   var modal = new bootstrap.Modal(document.getElementById('modalNombre'));
   modal.show();
 }
 function aplicarNombre() {
   const driveId = document.getElementById('inputDriveId').value;
-  const nombre = document.getElementById('inputNuevoNombre').value;
+  const nombre = document.getElementById('inputNuevoNombre').value.trim();
   showLoader('Renombrando imagen...');
   fetch(window.location.pathname + '/renombrar', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ driveId, nombre })
   })
-  .then(res => res.json())
-  .then(data => {
-    hideLoader();
-    if (data.ok) {
-      document.getElementById('nombreImg' + driveId).textContent = nombre;
-      showAlert('Nombre actualizado.', 'success');
-    } else {
-      showAlert('Error al renombrar la imagen.', 'danger');
-    }
-  });
+    .then(res => res.json())
+    .then(data => {
+      hideLoader();
+      if (data.ok) {
+        document.getElementById('nombreImg' + driveId).textContent = nombre;
+        showAlert('Nombre actualizado.', 'success');
+      } else {
+        showAlert('Error al renombrar la imagen.', 'danger');
+      }
+    });
 }
 function confirmarEliminarCarpeta() {
   var modal = new bootstrap.Modal(document.getElementById('modalConfirmarEliminarCarpeta'));

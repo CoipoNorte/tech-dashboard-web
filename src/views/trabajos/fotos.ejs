@@ -1,12 +1,12 @@
 <%- include('../partials/header', { title }) %>
 <body data-trabajo-id="<%= trabajo._id %>">
-<h2 class="mb-4 text-center">Gestión de Fotos</h2>
-<div class="mb-3 text-center">
+<h2 class="mb-4 text-center"><i class="bi bi-images"></i> Gestión de Fotos</h2>
+<div class="mb-3 d-flex flex-wrap justify-content-center align-items-center gap-2">
   <% if (trabajo.carpetaDriveId) { %>
     <a href="https://drive.google.com/drive/folders/<%= trabajo.carpetaDriveId %>" target="_blank" class="btn btn-outline-secondary">
       <i class="bi bi-folder2-open"></i> Abrir carpeta en Google Drive
     </a>
-    <button type="button" class="btn btn-outline-danger ms-2" onclick="confirmarEliminarCarpeta()" title="Eliminar carpeta de Drive">
+    <button type="button" class="btn btn-outline-danger" onclick="confirmarEliminarCarpeta()" title="Eliminar carpeta de Drive">
       <i class="bi bi-trash"></i>
     </button>
   <% } else { %>
@@ -14,7 +14,7 @@
       <i class="bi bi-folder2-open"></i> Abrir carpeta en Google Drive
     </button>
   <% } %>
-  <a href="/trabajos/<%= trabajo._id %>" class="btn btn-secondary ms-2">Volver al detalle</a>
+  <a href="/trabajos/<%= trabajo._id %>" class="btn btn-secondary">Volver al detalle</a>
 </div>
 
 <%- include('../partials/alerts') %>
@@ -22,7 +22,7 @@
 <!-- Subir nuevas imágenes -->
 <div class="mb-4 text-center">
   <form id="formSubirFotos" enctype="multipart/form-data">
-    <label for="inputFotos" class="btn btn-success">
+    <label for="inputFotos" class="btn btn-success btn-lg">
       <i class="bi bi-upload"></i> Subir fotos
       <input type="file" name="imagenes" id="inputFotos" class="d-none" multiple>
     </label>
@@ -35,13 +35,16 @@
     <% trabajo.imagenes.forEach((img, idx) => { %>
       <div class="col-12">
         <div class="card shadow-sm border-0 mb-2">
-          <div class="card-body d-flex align-items-center justify-content-between">
-            <span class="small text-muted fw-bold" id="nombreImg<%= img.driveId %>"><%= img.nombre || '' %></span>
-            <div>
-              <button type="button" class="btn btn-sm btn-outline-primary me-1" onclick="abrirModalNombre('<%= img.driveId %>', document.getElementById('nombreImg<%= img.driveId %>').textContent)" title="Editar nombre">
+          <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+            <span class="small text-muted fw-bold" id="nombreImg<%= img.driveId %>">
+              <i class="bi bi-file-earmark-image me-2 text-primary"></i>
+              <%= (img.nombre || '').trim() %>
+            </span>
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-sm btn-outline-primary" onclick="abrirModalNombre('<%= img.driveId %>', document.getElementById('nombreImg<%= img.driveId %>').textContent)" title="Editar nombre">
                 <i class="bi bi-pencil"></i>
               </button>
-              <a href="<%= img.url %>" class="btn btn-sm btn-outline-success me-1" title="Ver/Descargar en Drive" target="_blank">
+              <a href="<%= img.url %>" class="btn btn-sm btn-outline-success" title="Ver/Descargar en Drive" target="_blank">
                 <i class="bi bi-download"></i>
               </a>
               <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarImg('<%= img.driveId %>')" title="Eliminar imagen">

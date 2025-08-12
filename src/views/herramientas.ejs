@@ -1,0 +1,175 @@
+<%- include('partials/header', { title }) %>
+<div class="container mt-4">
+  <h2 class="mb-4 text-center"><i class="bi bi-file-earmark-excel"></i> Herramientas de Exportación/Importación</h2>
+  <% if (dbStats) { %>
+    <div class="alert alert-info text-center">
+      <b>Espacio usado en MongoDB:</b> <%= (dbStats.storageSize / 1024 / 1024).toFixed(2) %> MB
+    </div>
+  <% } %>
+  <div class="row g-2 mb-4 justify-content-center">
+    <div class="col-12 col-md-auto d-grid">
+      <form class="d-inline" action="/herramientas/exportar" method="get">
+        <input type="hidden" name="tipo" value="csv">
+        <button class="btn btn-outline-success w-100" type="submit">
+          <i class="bi bi-file-earmark-spreadsheet"></i> Exportar CSV (ZIP)
+        </button>
+      </form>
+    </div>
+    <div class="col-12 col-md-auto d-grid">
+      <form class="d-inline" action="/herramientas/exportar" method="get">
+        <input type="hidden" name="tipo" value="excel">
+        <button class="btn btn-outline-primary w-100" type="submit">
+          <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+        </button>
+      </form>
+    </div>
+    <div class="col-12 col-md-auto d-grid">
+      <button class="btn btn-outline-danger w-100" type="button" data-bs-toggle="modal" data-bs-target="#modalVaciarClientes">
+        <i class="bi bi-trash"></i> Vaciar Clientes
+      </button>
+    </div>
+    <div class="col-12 col-md-auto d-grid">
+      <button class="btn btn-outline-danger w-100" type="button" data-bs-toggle="modal" data-bs-target="#modalVaciarTrabajos">
+        <i class="bi bi-trash"></i> Vaciar Trabajos
+      </button>
+    </div>
+  </div>
+  <div class="mb-4 text-center">
+    <form id="formImportar" action="/herramientas/importar" method="post" enctype="multipart/form-data" class="d-inline-block">
+      <label class="btn btn-outline-info">
+        <i class="bi bi-upload"></i> Importar CSV/Excel
+        <input type="file" name="archivo" class="d-none" accept=".csv,.xlsx,.xls,.zip" required onchange="importarArchivo()">
+      </label>
+      <select name="tipo" id="tipoImportar" class="mt-4 form-select d-inline-block w-auto ms-2">
+        <option value="ambos">Clientes y Trabajos</option>
+        <option value="clientes">Solo Clientes</option>
+        <option value="trabajos">Solo Trabajos</option>
+      </select>
+    </form>
+  </div>
+  <div id="herramientasAlert" class="alert d-none text-center" role="alert"></div>
+</div>
+
+<%- include('partials/alerts') %>
+
+<!-- Modal Bootstrap para confirmar vaciado de clientes -->
+<div class="modal fade" id="modalVaciarClientes" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title"><i class="bi bi-trash"></i> Confirmar vaciado de clientes</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        ¿Estás seguro de que deseas vaciar todos los clientes? Esta acción no se puede deshacer.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnVaciarClientesConfirmado">Vaciar Clientes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Bootstrap para confirmar vaciado de trabajos -->
+<div class="modal fade" id="modalVaciarTrabajos" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title"><i class="bi bi-trash"></i> Confirmar vaciado de trabajos</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        ¿Estás seguro de que deseas vaciar todos los trabajos? Esta acción no se puede deshacer.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnVaciarTrabajosConfirmado">Vaciar Trabajos</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Vaciado de clientes
+  const btnVaciarClientes = document.getElementById('btnVaciarClientesConfirmado');
+  if (btnVaciarClientes) {
+    btnVaciarClientes.addEventListener('click', function() {
+      hideConfirmModalVaciar('Clientes');
+      showLoader('Vaciando clientes...');
+      fetch('/herramientas/vaciar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tipo: 'clientes' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        hideLoader();
+        if (data.ok) {
+          showAlert('Clientes vaciados correctamente.', 'success', 'herramientasAlert');
+          setTimeout(() => { location.reload(); }, 1200);
+        } else {
+          showAlert('Error al vaciar los clientes.', 'danger', 'herramientasAlert');
+        }
+      });
+    });
+  }
+
+  // Vaciado de trabajos
+  const btnVaciarTrabajos = document.getElementById('btnVaciarTrabajosConfirmado');
+  if (btnVaciarTrabajos) {
+    btnVaciarTrabajos.addEventListener('click', function() {
+      hideConfirmModalVaciar('Trabajos');
+      showLoader('Vaciando trabajos...');
+      fetch('/herramientas/vaciar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tipo: 'trabajos' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        hideLoader();
+        if (data.ok) {
+          showAlert('Trabajos vaciados correctamente.', 'success', 'herramientasAlert');
+          setTimeout(() => { location.reload(); }, 1200);
+        } else {
+          showAlert('Error al vaciar los trabajos.', 'danger', 'herramientasAlert');
+        }
+      });
+    });
+  }
+
+  // Importar archivo con loader y alerta Bootstrap
+  window.importarArchivo = function() {
+    const form = document.getElementById('formImportar');
+    const input = form.querySelector('input[type="file"]');
+    const tipo = document.getElementById('tipoImportar').value;
+    if (!input.files.length) return;
+    showLoader('Importando archivo...');
+    const formData = new FormData(form);
+    formData.set('tipo', tipo);
+    fetch('/herramientas/importar', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      hideLoader();
+      if (data.ok) {
+        showAlert('Archivo importado correctamente.', 'success', 'herramientasAlert');
+        setTimeout(() => { location.reload(); }, 1200);
+      } else {
+        showAlert(data.msg || 'Error al importar el archivo.', 'danger', 'herramientasAlert');
+      }
+    });
+  }
+});
+
+function hideConfirmModalVaciar(tipo) {
+  var modalEl = document.getElementById(tipo === 'Clientes' ? 'modalVaciarClientes' : 'modalVaciarTrabajos');
+  var modal = bootstrap.Modal.getInstance(modalEl);
+  if (modal) modal.hide();
+}
+</script>
+<%- include('partials/footer') %>

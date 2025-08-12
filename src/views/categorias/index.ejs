@@ -1,34 +1,37 @@
 <%- include('../partials/header', { title }) %>
 <h1>Categorías</h1>
 <a href="/categorias/nuevo" class="btn btn-success mb-3"><i class="bi bi-plus-circle"></i> Nueva Categoría</a>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Icono</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% categorias.forEach(cat => { %>
+
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
       <tr>
-        <td><%= cat.nombre %></td>
-        <td>
-          <i class="<%= cat.icono || 'bi bi-tag' %>" style="font-size:1.5rem"></i>
-          <span class="text-muted" style="font-size:0.9rem"><%= cat.icono || 'bi bi-tag' %></span>
-        </td>
-        <td>
-          <a href="/categorias/<%= cat._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
-            <i class="bi bi-pencil"></i>
-          </a>
-          <form action="/categorias/<%= cat._id %>/eliminar" method="post" style="display:inline;">
-            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar categoría?')" title="Eliminar">
-              <i class="bi bi-trash"></i>
-            </button>
-          </form>
-        </td>
+        <th>Nombre</th>
+        <th>Icono</th>
+        <th>Acciones</th>
       </tr>
-    <% }) %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% categorias.forEach(cat => { %>
+        <tr>
+          <td><%= cat.nombre %></td>
+          <td>
+            <i class="<%= cat.icono || 'bi bi-tag' %>" style="font-size:1.5rem"></i>
+            <span class="text-muted" style="font-size:0.9rem"><%= cat.icono || 'bi bi-tag' %></span>
+          </td>
+          <td>
+            <a href="/categorias/<%= cat._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <form action="/categorias/<%= cat._id %>/eliminar" method="post" style="display:inline;">
+              <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar categoría?')" title="Eliminar">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
 <%- include('../partials/footer') %>
