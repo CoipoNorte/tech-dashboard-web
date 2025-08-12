@@ -1,25 +1,27 @@
-<%- include('../partials/header') %>
-<div class="container mt-4">
-  <h2><%= cliente._id ? 'Editar Cliente' : 'Nuevo Cliente' %></h2>
-  <form action="<%= action %>" method="POST">
-    <div class="mb-3">
-      <label>Nombre</label>
-      <input type="text" name="nombre" class="form-control" value="<%= cliente.nombre || '' %>" required>
-    </div>
-    <div class="mb-3">
-      <label>Teléfono</label>
-      <input type="text" name="telefono" class="form-control" value="<%= cliente.telefono || '' %>">
-    </div>
-    <div class="mb-3">
-      <label>Email</label>
-      <input type="email" name="email" class="form-control" value="<%= cliente.email || '' %>">
-    </div>
-    <div class="mb-3">
-      <label>Dirección</label>
-      <input type="text" name="direccion" class="form-control" value="<%= cliente.direccion || '' %>">
-    </div>
-    <button class="btn btn-success">Guardar</button>
-    <a href="/clientes" class="btn btn-secondary">Volver</a>
-  </form>
-</div>
+<%- include('../partials/header', { title }) %>
+<h1><%= title %></h1>
+<form action="<%= action %>" method="post">
+  <div class="mb-3">
+    <label>Nombre</label>
+    <input type="text" name="nombre" class="form-control" value="<%= cliente.nombre || '' %>" required>
+  </div>
+  <div class="mb-3">
+    <label>Teléfono</label>
+    <input type="text" name="telefono" class="form-control" value="<%= cliente.telefono || '' %>">
+  </div>
+  <div class="mb-3">
+    <label>Email</label>
+    <input type="email" name="email" class="form-control" value="<%= cliente.email || '' %>">
+  </div>
+  <div class="mb-3">
+    <label>Dirección</label>
+    <input type="text" name="direccion" class="form-control" value="<%= cliente.direccion || '' %>">
+  </div>
+  <div class="mb-3">
+    <label>Observaciones</label>
+    <textarea name="observaciones" class="form-control"><%= cliente.observaciones || '' %></textarea>
+  </div>
+  <button class="btn btn-primary">Guardar</button>
+  <a href="/clientes" class="btn btn-secondary">Cancelar</a>
+</form>
 <%- include('../partials/footer') %>

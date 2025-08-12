@@ -1,19 +1,25 @@
 const Usuario = require('../models/Usuario');
-const bcrypt = require('bcryptjs');
 
-exports.loginForm = (req, res) => res.render('auth/login');
+exports.formLogin = (req, res) => {
+  res.render('auth/login', { title: 'Iniciar sesión', error: null });
+};
 
 exports.login = async (req, res) => {
   const { username, password } = req.body;
-  const user = await Usuario.findOne({ username });
-  if (!user) return res.render('auth/login', { error: 'Usuario no encontrado' });
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.render('auth/login', { error: 'Contraseña incorrecta' });
-  req.session.userId = user._id;
-  req.session.user = user;
+  const usuario = await Usuario.findOne({ username });
+  if (!usuario) {
+    return res.render('auth/login', { title: 'Iniciar sesión', error: 'Usuario o contraseña incorrectos' });
+  }
+  const valido = await usuario.compararPassword(password);
+  if (!valido) {
+    return res.render('auth/login', { title: 'Iniciar sesión', error: 'Usuario o contraseña incorrectos' });
+  }
+  req.session.usuarioId = usuario._id;
   res.redirect('/dashboard');
 };
 
 exports.logout = (req, res) => {
-  req.session.destroy(() => res.redirect('/login'));
+  req.session.destroy(() => {
+    res.redirect('/login');
+  });
 };

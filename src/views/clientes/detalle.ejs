@@ -1,34 +1,31 @@
-<%- include('../partials/header') %>
-<div class="container mt-4">
-  <h2>Detalle de Cliente</h2>
-  <p><strong>Nombre:</strong> <%= cliente.nombre %></p>
-  <p><strong>Teléfono:</strong> <%= cliente.telefono %></p>
-  <p><strong>Email:</strong> <%= cliente.email %></p>
-  <p><strong>Dirección:</strong> <%= cliente.direccion %></p>
-  <h4>Trabajos</h4>
-  <a href="/trabajos/nuevo" class="btn btn-primary mb-2">Nuevo Trabajo</a>
-  <table class="table">
-    <thead>
+<%- include('../partials/header', { title }) %>
+<h1><%= cliente.nombre %></h1>
+<p><strong>Teléfono:</strong> <%= cliente.telefono %></p>
+<p><strong>Email:</strong> <%= cliente.email %></p>
+<p><strong>Dirección:</strong> <%= cliente.direccion %></p>
+<p><strong>Observaciones:</strong> <%= cliente.observaciones %></p>
+<a href="/trabajos/nuevo?cliente=<%= cliente._id %>" class="btn btn-success mb-3">Nuevo Trabajo para este cliente</a>
+<h3>Trabajos</h3>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Descripción</th>
+      <th>Categoría</th>
+      <th>Estado</th>
+      <th>Precio</th>
+      <th>Fecha Ingreso</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% trabajos.forEach(trabajo => { %>
       <tr>
-        <th>Descripción</th>
-        <th>Estado</th>
-        <th>Precio</th>
-        <th>Ingreso</th>
-        <th>Entrega</th>
+        <td><%= trabajo.descripcion %></td>
+        <td><%= trabajo.categoria.nombre %></td>
+        <td><span class="badge" style="background-color: <%= trabajo.estado.color %>"><%= trabajo.estado.nombre %></span></td>
+        <td>$<%= trabajo.precio %></td>
+        <td><%= trabajo.fechaIngreso.toLocaleDateString() %></td>
       </tr>
-    </thead>
-    <tbody>
-      <% trabajos.forEach(trabajo => { %>
-        <tr>
-          <td><%= trabajo.descripcion %></td>
-          <td><%= trabajo.estado %></td>
-          <td>$<%= trabajo.precio %></td>
-          <td><%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toLocaleDateString() : '' %></td>
-          <td><%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toLocaleDateString() : '' %></td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-  <a href="/clientes" class="btn btn-secondary">Volver</a>
-</div>
+    <% }) %>
+  </tbody>
+</table>
 <%- include('../partials/footer') %>

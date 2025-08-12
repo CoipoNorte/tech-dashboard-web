@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
-const ClienteSchema = new mongoose.Schema({
-  nombre: String,
+
+const clienteSchema = new mongoose.Schema({
+  nombre: { type: String, required: true },
   telefono: String,
   email: String,
   direccion: String,
-  createdAt: { type: Date, default: Date.now }
+  observaciones: String,
+  fechaCreacion: { type: Date, default: Date.now }
 });
-module.exports = mongoose.model('Cliente', ClienteSchema);
+
+module.exports = mongoose.model('Cliente', clienteSchema);

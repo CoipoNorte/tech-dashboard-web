@@ -2,17 +2,50 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Panel Técnico</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title><%= title %> | Tech Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+      min-height: 100vh;
+    }
+  </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
   <div class="container">
-    <a class="navbar-brand" href="/dashboard">Panel Técnico</a>
-    <div>
-      <a class="btn btn-outline-light" href="/clientes">Clientes</a>
-      <a class="btn btn-outline-light" href="/trabajos">Trabajos</a>
-      <a class="btn btn-outline-light" href="/logout">Salir</a>
+    <a class="navbar-brand" href="/dashboard">
+      <i class="bi bi-cpu"></i> Tech Dashboard
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <% if (typeof usuario !== 'undefined' && usuario) { %>
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link <%= title === 'Clientes' ? 'active' : '' %>" href="/clientes"><i class="bi bi-people"></i> Clientes</a></li>
+        <li class="nav-item"><a class="nav-link <%= title === 'Trabajos' ? 'active' : '' %>" href="/trabajos"><i class="bi bi-tools"></i> Trabajos</a></li>
+        <li class="nav-item"><a class="nav-link <%= title === 'Categorías' ? 'active' : '' %>" href="/categorias"><i class="bi bi-tags"></i> Categorías</a></li>
+        <li class="nav-item"><a class="nav-link <%= title === 'Estados' ? 'active' : '' %>" href="/estados"><i class="bi bi-flag"></i> Estados</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link <%= title === 'Mi Perfil' ? 'active' : '' %>" href="/usuarios/perfil">
+            <i class="bi bi-person-circle"></i> <%= usuario.nombre %>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout"><i class="bi bi-box-arrow-right"></i> Salir</a>
+        </li>
+      </ul>
+      <% } %>
     </div>
   </div>
 </nav>
+<div class="container">
+  </div>
+</nav>
+<div class="container">

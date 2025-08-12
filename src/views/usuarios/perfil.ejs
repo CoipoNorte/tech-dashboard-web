@@ -1,0 +1,25 @@
+<%- include('../partials/header', { title }) %>
+<h1>Mi Perfil</h1>
+<% if (error) { %>
+  <div class="alert alert-info"><%= error %></div>
+<% } %>
+<form method="post">
+  <div class="mb-3">
+    <label>Nombre</label>
+    <input type="text" name="nombre" class="form-control" value="<%= usuario.nombre %>" required>
+  </div>
+  <div class="mb-3">
+    <label>Usuario</label>
+    <input type="text" class="form-control" value="<%= usuario.username %>" disabled>
+  </div>
+  <div class="mb-3">
+    <label>Contraseña actual</label>
+    <input type="password" name="passwordActual" class="form-control">
+  </div>
+  <div class="mb-3">
+    <label>Nueva contraseña</label>
+    <input type="password" name="passwordNueva" class="form-control">
+  </div>
+  <button class="btn btn-primary">Actualizar</button>
+</form>
+<%- include('../partials/footer') %>

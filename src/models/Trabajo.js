@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
-const TrabajoSchema = new mongoose.Schema({
-  cliente: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente' },
-  descripcion: String,
-  estado: { type: String, enum: ['Pendiente', 'En Proceso', 'Listo', 'Entregado'], default: 'Pendiente' },
-  precio: Number,
+
+const trabajoSchema = new mongoose.Schema({
+  cliente: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente', required: true },
+  descripcion: { type: String, required: true },
+  precio: { type: Number, default: 0 },
   fechaIngreso: { type: Date, default: Date.now },
-  fechaEntrega: Date
+  fechaEntrega: Date,
+  imagen: String,
+  categoria: { type: mongoose.Schema.Types.ObjectId, ref: 'Categoria', required: true },
+  estado: { type: mongoose.Schema.Types.ObjectId, ref: 'Estado', required: true }
 });
-module.exports = mongoose.model('Trabajo', TrabajoSchema);
+
+module.exports = mongoose.model('Trabajo', trabajoSchema);

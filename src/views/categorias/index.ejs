@@ -1,0 +1,25 @@
+<%- include('../partials/header', { title }) %>
+<h1>Categorías</h1>
+<a href="/categorias/nuevo" class="btn btn-success mb-3">Nueva Categoría</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% categorias.forEach(cat => { %>
+      <tr>
+        <td><%= cat.nombre %></td>
+        <td>
+          <a href="/categorias/<%= cat._id %>/editar" class="btn btn-sm btn-primary">Editar</a>
+          <form action="/categorias/<%= cat._id %>/eliminar" method="post" style="display:inline;">
+            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar categoría?')">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+<%- include('../partials/footer') %>

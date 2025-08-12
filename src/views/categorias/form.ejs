@@ -1,0 +1,11 @@
+<%- include('../partials/header', { title }) %>
+<h1><%= title %></h1>
+<form action="<%= action %>" method="post">
+  <div class="mb-3">
+    <label>Nombre</label>
+    <input type="text" name="nombre" class="form-control" value="<%= categoria.nombre || '' %>" required>
+  </div>
+  <button class="btn btn-primary">Guardar</button>
+  <a href="/categorias" class="btn btn-secondary">Cancelar</a>
+</form>
+<%- include('../partials/footer') %>

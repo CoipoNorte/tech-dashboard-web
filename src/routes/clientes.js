@@ -1,19 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const clienteController = require('../controllers/clienteController');
+const { requireLogin } = require('../middlewares/auth');
 
-// Middleware simple de autenticación
-function isAuth(req, res, next) {
-  if (!req.session.userId) return res.redirect('/login');
-  next();
-}
-
-router.get('/', isAuth, clienteController.listar);
-router.get('/nuevo', isAuth, clienteController.formNuevo);
-router.post('/nuevo', isAuth, clienteController.crear);
-router.get('/editar/:id', isAuth, clienteController.formEditar);
-router.post('/editar/:id', isAuth, clienteController.editar);
-router.get('/eliminar/:id', isAuth, clienteController.eliminar);
-router.get('/detalle/:id', isAuth, clienteController.detalle);
+router.get('/', requireLogin, clienteController.listar);
+router.get('/nuevo', requireLogin, clienteController.formNuevo);
+router.post('/', requireLogin, clienteController.crear);
+router.get('/:id', requireLogin, clienteController.detalle);
+router.get('/:id/editar', requireLogin, clienteController.formEditar);
+router.post('/:id', requireLogin, clienteController.editar);
+router.post('/:id/eliminar', requireLogin, clienteController.eliminar);
 
 module.exports = router;

@@ -1,42 +1,57 @@
-<%- include('../partials/header') %>
-<div class="container mt-4">
-  <h2><%= trabajo._id ? 'Editar Trabajo' : 'Nuevo Trabajo' %></h2>
-  <form action="<%= action %>" method="POST">
-    <div class="mb-3">
-      <label>Cliente</label>
-      <select name="cliente" class="form-control" required>
-        <% clientes.forEach(c => { %>
-          <option value="<%= c._id %>" <%= trabajo.cliente && trabajo.cliente.toString() === c._id.toString() ? 'selected' : '' %>><%= c.nombre %></option>
-        <% }) %>
-      </select>
-    </div>
-    <div class="mb-3">
-      <label>Descripción</label>
-      <input type="text" name="descripcion" class="form-control" value="<%= trabajo.descripcion || '' %>" required>
-    </div>
-    <div class="mb-3">
-      <label>Estado</label>
-      <select name="estado" class="form-control">
-        <option value="Pendiente" <%= trabajo.estado === 'Pendiente' ? 'selected' : '' %>>Pendiente</option>
-        <option value="En Proceso" <%= trabajo.estado === 'En Proceso' ? 'selected' : '' %>>En Proceso</option>
-        <option value="Listo" <%= trabajo.estado === 'Listo' ? 'selected' : '' %>>Listo</option>
-        <option value="Entregado" <%= trabajo.estado === 'Entregado' ? 'selected' : '' %>>Entregado</option>
-      </select>
-    </div>
-    <div class="mb-3">
-      <label>Precio</label>
-      <input type="number" name="precio" class="form-control" value="<%= trabajo.precio || '' %>">
-    </div>
-    <div class="mb-3">
-      <label>Fecha de Ingreso</label>
-      <input type="date" name="fechaIngreso" class="form-control" value="<%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toISOString().split('T')[0] : '' %>">
-    </div>
-    <div class="mb-3">
-      <label>Fecha de Entrega</label>
-      <input type="date" name="fechaEntrega" class="form-control" value="<%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toISOString().split('T')[0] : '' %>">
-    </div>
-    <button class="btn btn-success">Guardar</button>
-    <a href="/trabajos" class="btn btn-secondary">Volver</a>
-  </form>
-</div>
+<%- include('../partials/header', { title }) %>
+<h1><%= title %></h1>
+<form action="<%= action %>" method="post" enctype="multipart/form-data">
+  <div class="mb-3">
+    <label>Cliente</label>
+    <select name="cliente" class="form-control" required>
+      <option value="">Seleccione...</option>
+      <% clientes.forEach(c => { %>
+        <option value="<%= c._id %>" <%= (trabajo.cliente && trabajo.cliente.toString() === c._id.toString()) || (clienteId && clienteId == c._id) ? 'selected' : '' %>><%= c.nombre %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label>Descripción</label>
+    <input type="text" name="descripcion" class="form-control" value="<%= trabajo.descripcion || '' %>" required>
+  </div>
+  <div class="mb-3">
+    <label>Precio</label>
+    <input type="number" name="precio" class="form-control" value="<%= trabajo.precio || '' %>">
+  </div>
+  <div class="mb-3">
+    <label>Fecha Ingreso</label>
+    <input type="date" name="fechaIngreso" class="form-control" value="<%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toISOString().substring(0,10) : '' %>">
+  </div>
+  <div class="mb-3">
+    <label>Fecha Entrega</label>
+    <input type="date" name="fechaEntrega" class="form-control" value="<%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toISOString().substring(0,10) : '' %>">
+  </div>
+  <div class="mb-3">
+    <label>Categoría</label>
+    <select name="categoria" class="form-control" required>
+      <option value="">Seleccione...</option>
+      <% categorias.forEach(cat => { %>
+        <option value="<%= cat._id %>" <%= (trabajo.categoria && trabajo.categoria.toString() === cat._id.toString()) ? 'selected' : '' %>><%= cat.nombre %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label>Estado</label>
+    <select name="estado" class="form-control" required>
+      <option value="">Seleccione...</option>
+      <% estados.forEach(est => { %>
+        <option value="<%= est._id %>" <%= (trabajo.estado && trabajo.estado.toString() === est._id.toString()) ? 'selected' : '' %>><%= est.nombre %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label>Imagen</label>
+    <% if (trabajo.imagen) { %>
+      <img src="/uploads/<%= trabajo.imagen %>" style="width:100px;"><br>
+    <% } %>
+    <input type="file" name="imagen" class="form-control">
+  </div>
+  <button class="btn btn-primary">Guardar</button>
+  <a href="/trabajos" class="btn btn-secondary">Cancelar</a>
+</form>
 <%- include('../partials/footer') %>

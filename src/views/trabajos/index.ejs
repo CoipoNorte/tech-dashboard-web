@@ -1,35 +1,46 @@
-<%- include('../partials/header') %>
-<div class="container mt-4">
-  <h2>Trabajos</h2>
-  <a href="/trabajos/nuevo" class="btn btn-primary mb-2">Nuevo Trabajo</a>
-  <table class="table table-bordered">
-    <thead>
+<%- include('../partials/header', { title }) %>
+<h1>Trabajos</h1>
+<form class="mb-3" method="get">
+  <input type="text" name="q" value="<%= q || '' %>" placeholder="Buscar trabajo..." class="form-control" />
+</form>
+<a href="/trabajos/nuevo" class="btn btn-success mb-3">Nuevo Trabajo</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Descripción</th>
+      <th>Cliente</th>
+      <th>Categoría</th>
+      <th>Estado</th>
+      <th>Precio</th>
+      <th>Imagen</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% trabajos.forEach(trabajo => { %>
       <tr>
-        <th>Cliente</th>
-        <th>Descripción</th>
-        <th>Estado</th>
-        <th>Precio</th>
-        <th>Ingreso</th>
-        <th>Entrega</th>
-        <th>Acciones</th>
+        <td><%= trabajo.descripcion %></td>
+        <td><%= trabajo.cliente ? trabajo.cliente.nombre : '' %></td>
+        <td><%= trabajo.categoria ? trabajo.categoria.nombre : '' %></td>
+        <td>
+          <span class="badge" style="background-color: <%= trabajo.estado ? trabajo.estado.color : '#ccc' %>">
+            <%= trabajo.estado ? trabajo.estado.nombre : '' %>
+          </span>
+        </td>
+        <td>$<%= trabajo.precio %></td>
+        <td>
+          <% if (trabajo.imagen) { %>
+            <img src="/uploads/<%= trabajo.imagen %>" alt="Foto" style="width:50px;">
+          <% } %>
+        </td>
+        <td>
+          <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary">Editar</a>
+          <form action="/trabajos/<%= trabajo._id %>/eliminar" method="post" style="display:inline;">
+            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar trabajo?')">Eliminar</button>
+          </form>
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      <% trabajos.forEach(trabajo => { %>
-        <tr>
-          <td><%= trabajo.cliente ? trabajo.cliente.nombre : '' %></td>
-          <td><%= trabajo.descripcion %></td>
-          <td><%= trabajo.estado %></td>
-          <td>$<%= trabajo.precio %></td>
-          <td><%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toLocaleDateString() : '' %></td>
-          <td><%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toLocaleDateString() : '' %></td>
-          <td>
-            <a href="/trabajos/editar/<%= trabajo._id %>" class="btn btn-sm btn-warning">Editar</a>
-            <a href="/trabajos/eliminar/<%= trabajo._id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar trabajo?')">Eliminar</a>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
+    <% }) %>
+  </tbody>
+</table>
 <%- include('../partials/footer') %>

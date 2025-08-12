@@ -1,29 +1,32 @@
-<%- include('../partials/header') %>
-<div class="container mt-4">
-  <h2>Clientes</h2>
-  <a href="/clientes/nuevo" class="btn btn-primary mb-2">Nuevo Cliente</a>
-  <table class="table table-bordered">
-    <thead>
+<%- include('../partials/header', { title }) %>
+<h1>Clientes</h1>
+<form class="mb-3" method="get">
+  <input type="text" name="q" value="<%= q || '' %>" placeholder="Buscar cliente..." class="form-control" />
+</form>
+<a href="/clientes/nuevo" class="btn btn-success mb-3">Nuevo Cliente</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Teléfono</th>
+      <th>Email</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% clientes.forEach(cliente => { %>
       <tr>
-        <th>Nombre</th>
-        <th>Teléfono</th>
-        <th>Email</th>
-        <th>Acciones</th>
+        <td><a href="/clientes/<%= cliente._id %>"><%= cliente.nombre %></a></td>
+        <td><%= cliente.telefono %></td>
+        <td><%= cliente.email %></td>
+        <td>
+          <a href="/clientes/<%= cliente._id %>/editar" class="btn btn-sm btn-primary">Editar</a>
+          <form action="/clientes/<%= cliente._id %>/eliminar" method="post" style="display:inline;">
+            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar cliente?')">Eliminar</button>
+          </form>
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      <% clientes.forEach(cliente => { %>
-        <tr>
-          <td><a href="/clientes/detalle/<%= cliente._id %>"><%= cliente.nombre %></a></td>
-          <td><%= cliente.telefono %></td>
-          <td><%= cliente.email %></td>
-          <td>
-            <a href="/clientes/editar/<%= cliente._id %>" class="btn btn-sm btn-warning">Editar</a>
-            <a href="/clientes/eliminar/<%= cliente._id %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar cliente?')">Eliminar</a>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
+    <% }) %>
+  </tbody>
+</table>
 <%- include('../partials/footer') %>
