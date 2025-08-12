@@ -1,10 +1,48 @@
 <%- include('../partials/header', { title }) %>
+<%
+function formatMonth(date) {
+  if (!date) return '';
+  return date.toLocaleString('es-ES', { month: 'short', year: '2-digit' });
+}
+%>
 <h1>Trabajos</h1>
-<form class="mb-3" method="get">
-  <input type="text" name="q" value="<%= q || '' %>" placeholder="Buscar trabajo..." class="form-control" />
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-3">
+    <select name="estado" class="form-select">
+      <option value="">Todos los estados</option>
+      <% estados.forEach(est => { %>
+        <option value="<%= est._id %>" <%= (req.query.estado == est._id) ? 'selected' : '' %>><%= est.nombre %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <select name="categoria" class="form-select">
+      <option value="">Todas las categorías</option>
+      <% categorias.forEach(cat => { %>
+        <option value="<%= cat._id %>" <%= (req.query.categoria == cat._id) ? 'selected' : '' %>><%= cat.nombre %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select name="orden" class="form-select">
+      <option value="">Ordenar por...</option>
+      <option value="precio_asc" <%= req.query.orden === 'precio_asc' ? 'selected' : '' %>>Precio ↑</option>
+      <option value="precio_desc" <%= req.query.orden === 'precio_desc' ? 'selected' : '' %>>Precio ↓</option>
+      <option value="fechaIngreso_asc" <%= req.query.orden === 'fechaIngreso_asc' ? 'selected' : '' %>>Fecha inicio ↑</option>
+      <option value="fechaIngreso_desc" <%= req.query.orden === 'fechaIngreso_desc' ? 'selected' : '' %>>Fecha inicio ↓</option>
+      <option value="fechaEntrega_asc" <%= req.query.orden === 'fechaEntrega_asc' ? 'selected' : '' %>>Fecha entrega ↑</option>
+      <option value="fechaEntrega_desc" <%= req.query.orden === 'fechaEntrega_desc' ? 'selected' : '' %>>Fecha entrega ↓</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-primary w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+  </div>
+  <div class="col-md-2">
+    <a href="/trabajos" class="btn btn-secondary w-100"><i class="bi bi-x-circle"></i> Limpiar</a>
+  </div>
 </form>
-<a href="/trabajos/nuevo" class="btn btn-success mb-3">Nuevo Trabajo</a>
-<table class="table table-striped">
+<a href="/trabajos/nuevo" class="btn btn-success mb-3"><i class="bi bi-plus-circle"></i> Nuevo Trabajo</a>
+<table class="table table-striped align-middle">
   <thead>
     <tr>
       <th>Descripción</th>
@@ -12,6 +50,8 @@
       <th>Categoría</th>
       <th>Estado</th>
       <th>Precio</th>
+      <th>Ingreso</th>
+      <th>Entrega</th>
       <th>Imagen</th>
       <th>Acciones</th>
     </tr>
@@ -28,15 +68,21 @@
           </span>
         </td>
         <td>$<%= trabajo.precio %></td>
+        <td><%= formatMonth(trabajo.fechaIngreso) %></td>
+        <td><%= formatMonth(trabajo.fechaEntrega) %></td>
         <td>
           <% if (trabajo.imagen) { %>
             <img src="/uploads/<%= trabajo.imagen %>" alt="Foto" style="width:50px;">
           <% } %>
         </td>
         <td>
-          <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary">Editar</a>
+          <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
+            <i class="bi bi-pencil"></i>
+          </a>
           <form action="/trabajos/<%= trabajo._id %>/eliminar" method="post" style="display:inline;">
-            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar trabajo?')">Eliminar</button>
+            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar trabajo?')" title="Eliminar">
+              <i class="bi bi-trash"></i>
+            </button>
           </form>
         </td>
       </tr>

@@ -6,14 +6,28 @@ const path = require('path');
 const fs = require('fs');
 
 exports.listar = async (req, res) => {
-  const { q } = req.query;
-  let trabajos;
-  if (q) {
-    trabajos = await Trabajo.find({ descripcion: { $regex: q, $options: 'i' } }).populate('cliente categoria estado');
-  } else {
-    trabajos = await Trabajo.find().populate('cliente categoria estado');
-  }
-  res.render('trabajos/index', { title: 'Trabajos', trabajos, q });
+  const { q, estado, categoria, orden } = req.query;
+  let filtro = {};
+  if (q) filtro.descripcion = { $regex: q, $options: 'i' };
+  if (estado) filtro.estado = estado;
+  if (categoria) filtro.categoria = categoria;
+
+  let sort = {};
+  if (orden === 'precio_asc') sort.precio = 1;
+  if (orden === 'precio_desc') sort.precio = -1;
+  if (orden === 'fechaIngreso_asc') sort.fechaIngreso = 1;
+  if (orden === 'fechaIngreso_desc') sort.fechaIngreso = -1;
+  if (orden === 'fechaEntrega_asc') sort.fechaEntrega = 1;
+  if (orden === 'fechaEntrega_desc') sort.fechaEntrega = -1;
+
+  const trabajos = await Trabajo.find(filtro)
+    .populate('cliente categoria estado')
+    .sort(sort);
+
+  const estados = await Estado.find();
+  const categorias = await Categoria.find();
+
+  res.render('trabajos/index', { title: 'Trabajos', trabajos, q, estados, categorias, req });
 };
 
 exports.formNuevo = async (req, res) => {
