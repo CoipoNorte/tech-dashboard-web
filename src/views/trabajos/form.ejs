@@ -1,8 +1,8 @@
 <%- include('../partials/header', { title }) %>
 <h1><%= title %></h1>
-<form action="<%= action %>" method="post" enctype="multipart/form-data" id="trabajoForm">
+<form action="<%= action %>" method="post" id="trabajoForm">
 
-  <!-- Cliente (fila corta) -->
+  <!-- Cliente -->
   <div class="mb-3" style="max-width: 350px;">
     <label>Cliente</label>
     <div class="input-group">
@@ -16,25 +16,27 @@
     </div>
   </div>
 
-  <!-- Descripción (100%) -->
+  <!-- Descripción -->
   <div class="mb-3">
     <label>Descripción</label>
     <div class="input-group">
       <span class="input-group-text bg-primary text-white"><i class="bi bi-card-text"></i></span>
-      <input type="text" name="descripcion" class="form-control border-primary" value="<%= trabajo.descripcion || '' %>" required>
+      <textarea name="descripcion" class="form-control border-primary" rows="3" maxlength="500" placeholder="Describe el trabajo realizado..." required oninput="document.getElementById('descCount').textContent = this.value.length + '/500';"><%= trabajo.descripcion || '' %></textarea>
     </div>
+    <div class="text-end small text-muted"><span id="descCount"><%= (trabajo.descripcion || '').length %></span>/500</div>
   </div>
 
-  <!-- Observaciones (100%) -->
+  <!-- Observaciones -->
   <div class="mb-3">
     <label>Observaciones</label>
     <div class="input-group">
       <span class="input-group-text bg-info text-white"><i class="bi bi-chat-left-text"></i></span>
-      <textarea name="observaciones" class="form-control border-info"><%= trabajo.observaciones || '' %></textarea>
+      <textarea name="observaciones" class="form-control border-info" rows="2" maxlength="300" placeholder="Observaciones adicionales..." oninput="document.getElementById('obsCount').textContent = this.value.length + '/300';"><%= trabajo.observaciones || '' %></textarea>
     </div>
+    <div class="text-end small text-muted"><span id="obsCount"><%= (trabajo.observaciones || '').length %></span>/300</div>
   </div>
 
-  <!-- Precio, Fecha Ingreso, Fecha Entrega (misma fila) -->
+  <!-- Precio, Fecha Ingreso, Fecha Entrega -->
   <div class="row mb-3">
     <div class="col-md-4 mb-2 mb-md-0">
       <label>Precio</label>
@@ -59,16 +61,18 @@
     </div>
   </div>
 
-  <!-- Categoría, Estado, Urgencia (misma fila) -->
+  <!-- Categoría, Estado, Urgencia -->
   <div class="row mb-3">
     <div class="col-md-4 mb-2 mb-md-0">
       <label>Categoría</label>
       <div class="input-group">
         <span class="input-group-text"><i class="bi bi-tags"></i></span>
-        <select name="categoria" class="form-control" required>
+        <select name="categoria" class="form-select" id="selectCategoria" required>
           <option value="">Seleccione...</option>
           <% categorias.forEach(cat => { %>
-            <option value="<%= cat._id %>" <%= (trabajo.categoria && trabajo.categoria.toString() === cat._id.toString()) ? 'selected' : '' %>><%= cat.nombre %></option>
+            <option value="<%= cat._id %>" <%= (trabajo.categoria && trabajo.categoria.toString() === cat._id.toString()) ? 'selected' : '' %>>
+              <%= cat.nombre %>
+            </option>
           <% }) %>
         </select>
       </div>
@@ -77,10 +81,12 @@
       <label>Estado</label>
       <div class="input-group">
         <span class="input-group-text"><i class="bi bi-flag"></i></span>
-        <select name="estado" class="form-control" required>
+        <select name="estado" class="form-select" id="selectEstado" required>
           <option value="">Seleccione...</option>
           <% estados.forEach(est => { %>
-            <option value="<%= est._id %>" <%= (trabajo.estado && trabajo.estado.toString() === est._id.toString()) ? 'selected' : '' %>><%= est.nombre %></option>
+            <option value="<%= est._id %>" <%= (trabajo.estado && trabajo.estado.toString() === est._id.toString()) ? 'selected' : '' %>>
+              <%= est.nombre %>
+            </option>
           <% }) %>
         </select>
       </div>
@@ -89,12 +95,12 @@
       <label>Urgencia</label>
       <div class="input-group">
         <span class="input-group-text"><i class="bi bi-exclamation-circle-fill"></i></span>
-        <select name="urgencia" id="urgenciaSelect" class="form-control" required>
+        <select name="urgencia" id="selectUrgencia" class="form-select" required>
           <option value="">Seleccione...</option>
           <% urgencias.forEach(urg => { %>
-            <option value="<%= urg._id %>" data-nombre="<%= urg.nombre %>"
+            <option value="<%= urg._id %>"
               <%= (trabajo.urgencia && ((trabajo.urgencia._id ? trabajo.urgencia._id.toString() : trabajo.urgencia.toString()) === urg._id.toString())) ? 'selected' : '' %>>
-              <%= urg.nombre %>
+              <%= urg.nombre.toLowerCase() %>
             </option>
           <% }) %>
         </select>
@@ -102,24 +108,8 @@
           <i class="bi bi-lightning-charge"></i>
         </button>
       </div>
+      <div id="urgenciaMsg" class="alert alert-success mt-2 d-none py-2 px-3" role="alert"></div>
     </div>
-  </div>
-
-  <!-- Imagen: icono grande para seleccionar/cambiar -->
-  <div class="mb-4 text-center">
-    <label class="form-label d-block">Imagen</label>
-    <label for="imagenInput" style="cursor:pointer;">
-      <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light border border-2 shadow"
-            style="width: 90px; height: 90px; font-size: 2.5rem;">
-        <i class="bi bi-image"></i>
-      </span>
-      <input type="file" name="imagen" id="imagenInput" class="d-none">
-    </label>
-    <% if (trabajo.imagen) { %>
-      <div class="mt-2">
-        <img src="/uploads/<%= trabajo.imagen %>" style="max-width:120px;" class="rounded shadow">
-      </div>
-    <% } %>
   </div>
 
   <div class="text-center">
@@ -127,33 +117,46 @@
     <a href="/trabajos" class="btn btn-secondary">Cancelar</a>
   </div>
 </form>
-
 <script>
-document.getElementById('calcularUrgenciaBtn').addEventListener('click', function() {
-  const fechaIngreso = document.getElementById('fechaIngreso').value;
-  const fechaEntrega = document.getElementById('fechaEntrega').value;
-  const urgenciaSelect = document.getElementById('urgenciaSelect');
-  if (!fechaIngreso || !fechaEntrega) {
-    for (let i = 0; i < urgenciaSelect.options.length; i++) {
-      if (urgenciaSelect.options[i].text.toLowerCase().trim() === 'nula') {
-        urgenciaSelect.selectedIndex = i;
-        break;
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('calcularUrgenciaBtn');
+  const urgenciaSelect = document.getElementById('selectUrgencia');
+  const fechaEntregaInput = document.getElementById('fechaEntrega');
+  const urgenciaMsg = document.getElementById('urgenciaMsg');
+  if (btn && urgenciaSelect && fechaEntregaInput) {
+    btn.addEventListener('click', function() {
+      const fechaEntrega = fechaEntregaInput.value;
+      let urgencia = 'nula';
+      if (fechaEntrega) {
+        const hoy = new Date();
+        hoy.setHours(0,0,0,0);
+        const d2 = new Date(fechaEntrega);
+        d2.setHours(0,0,0,0);
+        const diff = (d2 - hoy) / (1000 * 60 * 60 * 24);
+        if (diff >= 14) urgencia = 'baja';
+        else if (diff >= 7) urgencia = 'media';
+        else if (diff >= 0) urgencia = 'alta';
       }
-    }
-    return;
-  }
-  const d1 = new Date(fechaIngreso);
-  const d2 = new Date(fechaEntrega);
-  const diff = (d2 - d1) / (1000 * 60 * 60 * 24);
-  let urgencia = 'nula';
-  if (diff >= 7) urgencia = 'baja';
-  else if (diff >= 3) urgencia = 'media';
-  else if (diff >= 0) urgencia = 'alta';
-  for (let i = 0; i < urgenciaSelect.options.length; i++) {
-    if (urgenciaSelect.options[i].getAttribute('data-nombre') && urgenciaSelect.options[i].getAttribute('data-nombre').toLowerCase().trim() === urgencia) {
-      urgenciaSelect.selectedIndex = i;
-      break;
-    }
+      let found = false;
+      for (let i = 0; i < urgenciaSelect.options.length; i++) {
+        const texto = urgenciaSelect.options[i].textContent.trim().toLowerCase();
+        if (texto === urgencia) {
+          urgenciaSelect.selectedIndex = i;
+          found = true;
+          break;
+        }
+      }
+      if (urgenciaMsg) {
+        urgenciaMsg.classList.remove('d-none', 'alert-danger', 'alert-success');
+        if (found) {
+          urgenciaMsg.classList.add('alert-success');
+          urgenciaMsg.textContent = 'Urgencia seleccionada: ' + urgencia.charAt(0).toUpperCase() + urgencia.slice(1);
+        } else {
+          urgenciaMsg.classList.add('alert-danger');
+          urgenciaMsg.textContent = 'No se encontró la opción de urgencia "' + urgencia + '". Verifica los nombres en la base de datos.';
+        }
+      }
+    });
   }
 });
 </script>

@@ -3,12 +3,24 @@ const bcrypt = require('bcryptjs');
 
 exports.perfil = async (req, res) => {
   const usuario = await Usuario.findById(req.session.usuarioId);
+  if (!usuario) {
+    req.session.destroy(() => {
+      res.redirect('/login');
+    });
+    return;
+  }
   const usuarios = await Usuario.find();
   res.render('usuarios/perfil', { title: 'Mi Perfil', usuario, usuarios, error: null });
 };
 
 exports.actualizarPerfil = async (req, res) => {
   const usuario = await Usuario.findById(req.session.usuarioId);
+  if (!usuario) {
+    req.session.destroy(() => {
+      res.redirect('/login');
+    });
+    return;
+  }
   const { nombre, passwordActual, passwordNueva } = req.body;
 
   if (passwordActual && passwordNueva) {
@@ -45,11 +57,17 @@ exports.crearUsuario = async (req, res) => {
 
 exports.formEditarUsuario = async (req, res) => {
   const usuario = await Usuario.findById(req.params.id);
+  if (!usuario) {
+    return res.redirect('/usuarios/perfil');
+  }
   res.render('usuarios/editar', { title: 'Editar Usuario', usuario, error: null });
 };
 
 exports.editarUsuario = async (req, res) => {
   const usuario = await Usuario.findById(req.params.id);
+  if (!usuario) {
+    return res.redirect('/usuarios/perfil');
+  }
   usuario.nombre = req.body.nombre;
   if (req.body.password && req.body.password.length > 0) {
     usuario.password = req.body.password;
@@ -60,5 +78,12 @@ exports.editarUsuario = async (req, res) => {
 
 exports.eliminarUsuario = async (req, res) => {
   await Usuario.findByIdAndDelete(req.params.id);
-  res.redirect('/usuarios/perfil');
+  // Si el usuario borrado es el que está logueado, cerrar sesión
+  if (req.session.usuarioId == req.params.id) {
+    req.session.destroy(() => {
+      res.redirect('/login');
+    });
+  } else {
+    res.redirect('/usuarios/perfil');
+  }
 };

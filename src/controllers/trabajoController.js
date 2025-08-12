@@ -3,8 +3,6 @@ const Cliente = require('../models/Cliente');
 const Categoria = require('../models/Categoria');
 const Estado = require('../models/Estado');
 const Urgencia = require('../models/Urgencia');
-const path = require('path');
-const fs = require('fs');
 
 function toInputDate(date) {
   if (!date) return '';
@@ -13,7 +11,6 @@ function toInputDate(date) {
   return d.toISOString().slice(0, 10);
 }
 
-// ¡AQUÍ EL FIX!
 function fixDateFromInput(dateStr) {
   if (!dateStr) return null;
   return new Date(dateStr + 'T12:00:00');
@@ -67,7 +64,7 @@ exports.formNuevo = async (req, res) => {
   const clienteId = req.query.cliente;
   res.render('trabajos/form', {
     title: 'Nuevo Trabajo',
-    trabajo: { fechaIngresoInput: '', fechaEntregaInput: '' },
+    trabajo: { fechaIngresoInput: '', fechaEntregaInput: '', imagenes: [] },
     clientes, categorias, estados, urgencias, clienteId,
     action: '/trabajos',
     method: 'POST'
@@ -76,7 +73,7 @@ exports.formNuevo = async (req, res) => {
 
 exports.crear = async (req, res) => {
   const data = req.body;
-  if (req.file) data.imagen = req.file.filename;
+  data.imagenes = [];
   data.fechaIngreso = fixDateFromInput(data.fechaIngreso);
   data.fechaEntrega = fixDateFromInput(data.fechaEntrega);
   await Trabajo.create(data);
@@ -106,13 +103,6 @@ exports.formEditar = async (req, res) => {
 
 exports.editar = async (req, res) => {
   const data = req.body;
-  if (req.file) {
-    data.imagen = req.file.filename;
-    const trabajo = await Trabajo.findById(req.params.id);
-    if (trabajo.imagen) {
-      fs.unlinkSync(path.join('uploads', trabajo.imagen));
-    }
-  }
   data.fechaIngreso = fixDateFromInput(data.fechaIngreso);
   data.fechaEntrega = fixDateFromInput(data.fechaEntrega);
   await Trabajo.findByIdAndUpdate(req.params.id, data);
@@ -120,10 +110,6 @@ exports.editar = async (req, res) => {
 };
 
 exports.eliminar = async (req, res) => {
-  const trabajo = await Trabajo.findById(req.params.id);
-  if (trabajo.imagen) {
-    fs.unlinkSync(path.join('uploads', trabajo.imagen));
-  }
   await Trabajo.findByIdAndDelete(req.params.id);
   res.redirect('/trabajos');
 };

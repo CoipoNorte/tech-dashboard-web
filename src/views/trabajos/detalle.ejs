@@ -4,7 +4,6 @@
     <div class="card shadow mb-4">
       <div class="card-body">
         <div class="d-flex align-items-center mb-3">
-          <!-- Icono de categoría sobre fondo de color de estado -->
           <span class="d-inline-flex align-items-center justify-content-center rounded-circle me-3"
                 style="background-color: <%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#ccc' %>; width:3rem; height:3rem;">
             <i class="<%= trabajo.categoria && trabajo.categoria.icono ? trabajo.categoria.icono : 'bi bi-tag' %>" style="font-size:1.7rem; color:#fff"></i>
@@ -41,21 +40,34 @@
           <%= trabajo.categoria ? trabajo.categoria.nombre : '' %>
         </div>
         <div class="mb-3">
-          <strong><i class="bi bi-card-text"></i> Descripción:</strong>
-          <div class="alert alert-primary mt-2" style="white-space: pre-line;"><%= trabajo.descripcion %></div>
-        </div>
-        <div class="mb-3">
           <strong><i class="bi bi-chat-left-text"></i> Observaciones:</strong>
           <div class="alert alert-info mt-2" style="white-space: pre-line;"><%= trabajo.observaciones || 'Sin observaciones' %></div>
         </div>
-        <% if (trabajo.imagen) { %>
-          <div class="mb-3">
-            <strong><i class="bi bi-image"></i> Imagen:</strong><br>
-            <img src="/uploads/<%= trabajo.imagen %>" alt="Imagen del trabajo" class="img-fluid rounded shadow mt-2" style="max-width:300px;">
+        <div class="mb-3">
+          <strong><i class="bi bi-card-text"></i> Descripción:</strong>
+          <div class="alert alert-primary mt-2" style="white-space: pre-line;"><%= trabajo.descripcion %></div>
+        </div>
+        <!-- Lista de nombres de imágenes -->
+        <% if (trabajo.imagenes && trabajo.imagenes.length > 0) { %>
+          <div class="mb-4">
+            <h5>Archivos en Google Drive:</h5>
+            <ul class="list-group">
+              <% trabajo.imagenes.forEach(img => { %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="small text-muted fw-bold"><%= img.nombre || '' %></span>
+                  <a href="<%= img.url %>" class="btn btn-sm btn-outline-success" title="Ver/Descargar en Drive" target="_blank">
+                    <i class="bi bi-download"></i>
+                  </a>
+                </li>
+              <% }) %>
+            </ul>
           </div>
+        <% } else { %>
+          <div class="mb-4 text-center text-muted">No hay imágenes en este trabajo.</div>
         <% } %>
         <div class="mt-4">
           <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-primary"><i class="bi bi-pencil"></i> Editar</a>
+          <a href="/trabajos/<%= trabajo._id %>/fotos" class="btn btn-info"><i class="bi bi-images"></i> Gestionar Fotos</a>
           <a href="/trabajos" class="btn btn-secondary">Volver</a>
         </div>
       </div>

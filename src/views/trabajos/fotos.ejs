@@ -1,0 +1,119 @@
+<%- include('../partials/header', { title }) %>
+<body data-trabajo-id="<%= trabajo._id %>">
+<h2 class="mb-4 text-center">Gestión de Fotos</h2>
+<div class="mb-3 text-center">
+  <% if (trabajo.carpetaDriveId) { %>
+    <a href="https://drive.google.com/drive/folders/<%= trabajo.carpetaDriveId %>" target="_blank" class="btn btn-outline-secondary">
+      <i class="bi bi-folder2-open"></i> Abrir carpeta en Google Drive
+    </a>
+    <button type="button" class="btn btn-outline-danger ms-2" onclick="confirmarEliminarCarpeta()" title="Eliminar carpeta de Drive">
+      <i class="bi bi-trash"></i>
+    </button>
+  <% } else { %>
+    <button class="btn btn-outline-secondary" disabled title="Aún no hay carpeta en Drive">
+      <i class="bi bi-folder2-open"></i> Abrir carpeta en Google Drive
+    </button>
+  <% } %>
+  <a href="/trabajos/<%= trabajo._id %>" class="btn btn-secondary ms-2">Volver al detalle</a>
+</div>
+
+<%- include('../partials/alerts') %>
+
+<!-- Subir nuevas imágenes -->
+<div class="mb-4 text-center">
+  <form id="formSubirFotos" enctype="multipart/form-data">
+    <label for="inputFotos" class="btn btn-success">
+      <i class="bi bi-upload"></i> Subir fotos
+      <input type="file" name="imagenes" id="inputFotos" class="d-none" multiple>
+    </label>
+  </form>
+</div>
+
+<!-- Lista de nombres de imágenes -->
+<div class="row g-3" id="galeriaFotos">
+  <% if (trabajo.imagenes && trabajo.imagenes.length > 0) { %>
+    <% trabajo.imagenes.forEach((img, idx) => { %>
+      <div class="col-12">
+        <div class="card shadow-sm border-0 mb-2">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <span class="small text-muted fw-bold" id="nombreImg<%= img.driveId %>"><%= img.nombre || '' %></span>
+            <div>
+              <button type="button" class="btn btn-sm btn-outline-primary me-1" onclick="abrirModalNombre('<%= img.driveId %>', document.getElementById('nombreImg<%= img.driveId %>').textContent)" title="Editar nombre">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <a href="<%= img.url %>" class="btn btn-sm btn-outline-success me-1" title="Ver/Descargar en Drive" target="_blank">
+                <i class="bi bi-download"></i>
+              </a>
+              <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarImg('<%= img.driveId %>')" title="Eliminar imagen">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="col-12 text-center text-muted">No hay imágenes en este trabajo.</div>
+  <% } %>
+</div>
+
+<!-- Modal para editar nombre -->
+<div class="modal fade" id="modalNombre" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar nombre de la imagen</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="form-control" id="inputNuevoNombre" value="">
+        <input type="hidden" id="inputDriveId" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="aplicarNombre()" data-bs-dismiss="modal">Aplicar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Bootstrap para confirmar eliminación de imagen -->
+<div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title"><i class="bi bi-trash"></i> Confirmar eliminación</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        ¿Estás seguro de que deseas eliminar esta imagen?
+        <input type="hidden" id="driveIdAEliminar" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnEliminarConfirmado">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Bootstrap para confirmar eliminación de carpeta -->
+<div class="modal fade" id="modalConfirmarEliminarCarpeta" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title"><i class="bi bi-trash"></i> Confirmar eliminación de carpeta</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        ¿Estás seguro de que deseas eliminar la carpeta de Google Drive y todas sus fotos?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnEliminarCarpetaConfirmado">Eliminar carpeta</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/fotos.js"></script>
+<%- include('../partials/footer') %>
