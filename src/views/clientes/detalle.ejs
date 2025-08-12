@@ -12,20 +12,37 @@
       <th>Descripción</th>
       <th>Categoría</th>
       <th>Estado</th>
+      <th>Urgencia</th>
       <th>Precio</th>
       <th>Fecha Ingreso</th>
       <th>Fecha Entrega</th>
+      <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
     <% trabajos.forEach(trabajo => { %>
       <tr>
-        <td><%= trabajo.descripcion %></td>
+        <td>
+          <a href="/trabajos/<%= trabajo._id %>"><%= trabajo.descripcion %></a>
+        </td>
         <td><%= trabajo.categoria.nombre %></td>
         <td><span class="badge" style="background-color: <%= trabajo.estado.color %>"><%= trabajo.estado.nombre %></span></td>
+        <td>
+          <span class="badge <%= trabajo.urgencia === 'alta' ? 'bg-danger' : (trabajo.urgencia === 'media' ? 'bg-warning text-dark' : 'bg-success') %>"><%= trabajo.urgencia %></span>
+        </td>
         <td>$<%= trabajo.precio %></td>
         <td><%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toLocaleDateString() : '' %></td>
         <td><%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toLocaleDateString() : '' %></td>
+        <td>
+          <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <form action="/trabajos/<%= trabajo._id %>/eliminar" method="post" style="display:inline;">
+            <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar trabajo?')" title="Eliminar">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+        </td>
       </tr>
     <% }) %>
   </tbody>

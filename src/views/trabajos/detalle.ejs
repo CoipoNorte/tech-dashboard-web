@@ -1,0 +1,23 @@
+<%- include('../partials/header', { title }) %>
+<h1>Detalle de Trabajo</h1>
+<div class="card mb-4">
+  <div class="card-body">
+    <h4 class="card-title"><%= trabajo.descripcion %></h4>
+    <p><strong>Cliente:</strong> <%= trabajo.cliente ? trabajo.cliente.nombre : '' %></p>
+    <p><strong>Categoría:</strong> <%= trabajo.categoria ? trabajo.categoria.nombre : '' %></p>
+    <p><strong>Estado:</strong> <span class="badge" style="background-color: <%= trabajo.estado ? trabajo.estado.color : '#ccc' %>"><%= trabajo.estado ? trabajo.estado.nombre : '' %></span></p>
+    <p><strong>Urgencia:</strong> <span class="badge <%= trabajo.urgencia === 'alta' ? 'bg-danger' : (trabajo.urgencia === 'media' ? 'bg-warning text-dark' : 'bg-success') %>"><%= trabajo.urgencia %></span></p>
+    <p><strong>Precio:</strong> $<%= trabajo.precio %></p>
+    <p><strong>Fecha Ingreso:</strong> <%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toLocaleDateString() : '' %></p>
+    <p><strong>Fecha Entrega:</strong> <%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toLocaleDateString() : '' %></p>
+    <p><strong>Observaciones:</strong> <%= trabajo.observaciones || 'Sin observaciones' %></p>
+    <% if (trabajo.imagen) { %>
+      <p><strong>Foto:</strong><br>
+        <img src="/uploads/<%= trabajo.imagen %>" style="max-width:300px;">
+      </p>
+    <% } %>
+    <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-primary"><i class="bi bi-pencil"></i> Editar</a>
+    <a href="/trabajos" class="btn btn-secondary">Volver</a>
+  </div>
+</div>
+<%- include('../partials/footer') %>

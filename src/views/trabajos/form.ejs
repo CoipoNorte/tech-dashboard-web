@@ -15,6 +15,10 @@
     <input type="text" name="descripcion" class="form-control" value="<%= trabajo.descripcion || '' %>" required>
   </div>
   <div class="mb-3">
+    <label>Observaciones</label>
+    <textarea name="observaciones" class="form-control"><%= trabajo.observaciones || '' %></textarea>
+  </div>
+  <div class="mb-3">
     <label>Precio</label>
     <input type="number" name="precio" class="form-control" value="<%= trabajo.precio || '' %>">
   </div>
@@ -42,6 +46,14 @@
       <% estados.forEach(est => { %>
         <option value="<%= est._id %>" <%= (trabajo.estado && trabajo.estado.toString() === est._id.toString()) ? 'selected' : '' %>><%= est.nombre %></option>
       <% }) %>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label>Urgencia</label>
+    <select name="urgencia" class="form-control" required>
+      <option value="baja" <%= trabajo.urgencia === 'baja' ? 'selected' : '' %>>Baja</option>
+      <option value="media" <%= trabajo.urgencia === 'media' ? 'selected' : '' %>>Media</option>
+      <option value="alta" <%= trabajo.urgencia === 'alta' ? 'selected' : '' %>>Alta</option>
     </select>
   </div>
   <div class="mb-3">

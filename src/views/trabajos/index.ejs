@@ -4,10 +4,18 @@ function formatMonth(date) {
   if (!date) return '';
   return date.toLocaleString('es-ES', { month: 'short', year: '2-digit' });
 }
+function urgenciaColor(urgencia, fechaEntrega) {
+  // Si falta menos de 2 días y es alta, rojo, si es media naranja, si es baja verde
+  if (!fechaEntrega) return 'bg-secondary';
+  const dias = (new Date(fechaEntrega) - new Date()) / (1000*60*60*24);
+  if (urgencia === 'alta' || (dias <= 2 && dias >= 0)) return 'bg-danger text-white';
+  if (urgencia === 'media' || (dias <= 5 && dias > 2)) return 'bg-warning text-dark';
+  return 'bg-success text-white';
+}
 %>
 <h1>Trabajos</h1>
 <form class="row g-2 mb-3" method="get">
-  <div class="col-md-3">
+  <div class="col-md-2">
     <select name="estado" class="form-select">
       <option value="">Todos los estados</option>
       <% estados.forEach(est => { %>
@@ -15,13 +23,19 @@ function formatMonth(date) {
       <% }) %>
     </select>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-2">
     <select name="categoria" class="form-select">
       <option value="">Todas las categorías</option>
       <% categorias.forEach(cat => { %>
         <option value="<%= cat._id %>" <%= (req.query.categoria == cat._id) ? 'selected' : '' %>><%= cat.nombre %></option>
       <% }) %>
     </select>
+  </div>
+  <div class="col-md-2">
+    <input type="date" name="fechaInicio" class="form-control" value="<%= req.query.fechaInicio || '' %>" placeholder="Desde">
+  </div>
+  <div class="col-md-2">
+    <input type="date" name="fechaFin" class="form-control" value="<%= req.query.fechaFin || '' %>" placeholder="Hasta">
   </div>
   <div class="col-md-2">
     <select name="orden" class="form-select">
@@ -34,11 +48,11 @@ function formatMonth(date) {
       <option value="fechaEntrega_desc" <%= req.query.orden === 'fechaEntrega_desc' ? 'selected' : '' %>>Fecha entrega ↓</option>
     </select>
   </div>
-  <div class="col-md-2">
-    <button class="btn btn-primary w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+  <div class="col-md-1">
+    <button class="btn btn-primary w-100"><i class="bi bi-funnel"></i></button>
   </div>
-  <div class="col-md-2">
-    <a href="/trabajos" class="btn btn-secondary w-100"><i class="bi bi-x-circle"></i> Limpiar</a>
+  <div class="col-md-1">
+    <a href="/trabajos" class="btn btn-secondary w-100"><i class="bi bi-x-circle"></i></a>
   </div>
 </form>
 <a href="/trabajos/nuevo" class="btn btn-success mb-3"><i class="bi bi-plus-circle"></i> Nuevo Trabajo</a>
@@ -49,17 +63,19 @@ function formatMonth(date) {
       <th>Cliente</th>
       <th>Categoría</th>
       <th>Estado</th>
+      <th>Urgencia</th>
       <th>Precio</th>
       <th>Ingreso</th>
       <th>Entrega</th>
-      <th>Imagen</th>
       <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
     <% trabajos.forEach(trabajo => { %>
       <tr>
-        <td><%= trabajo.descripcion %></td>
+        <td>
+          <a href="/trabajos/<%= trabajo._id %>"><%= trabajo.descripcion %></a>
+        </td>
         <td><%= trabajo.cliente ? trabajo.cliente.nombre : '' %></td>
         <td><%= trabajo.categoria ? trabajo.categoria.nombre : '' %></td>
         <td>
@@ -67,14 +83,14 @@ function formatMonth(date) {
             <%= trabajo.estado ? trabajo.estado.nombre : '' %>
           </span>
         </td>
+        <td>
+          <span class="badge <%= urgenciaColor(trabajo.urgencia, trabajo.fechaEntrega) %>">
+            <%= trabajo.urgencia %>
+          </span>
+        </td>
         <td>$<%= trabajo.precio %></td>
         <td><%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toLocaleDateString() : '' %></td>
         <td><%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toLocaleDateString() : '' %></td>
-        <td>
-          <% if (trabajo.imagen) { %>
-            <img src="/uploads/<%= trabajo.imagen %>" alt="Foto" style="width:50px;">
-          <% } %>
-        </td>
         <td>
           <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-sm btn-primary" title="Editar">
             <i class="bi bi-pencil"></i>

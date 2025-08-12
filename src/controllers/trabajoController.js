@@ -6,11 +6,18 @@ const path = require('path');
 const fs = require('fs');
 
 exports.listar = async (req, res) => {
-  const { q, estado, categoria, orden } = req.query;
+  const { q, estado, categoria, orden, fechaInicio, fechaFin } = req.query;
   let filtro = {};
   if (q) filtro.descripcion = { $regex: q, $options: 'i' };
   if (estado) filtro.estado = estado;
   if (categoria) filtro.categoria = categoria;
+
+  // Filtro por rango de fechas
+  if (fechaInicio || fechaFin) {
+    filtro.fechaIngreso = {};
+    if (fechaInicio) filtro.fechaIngreso.$gte = new Date(fechaInicio);
+    if (fechaFin) filtro.fechaIngreso.$lte = new Date(fechaFin);
+  }
 
   let sort = {};
   if (orden === 'precio_asc') sort.precio = 1;
@@ -74,4 +81,11 @@ exports.eliminar = async (req, res) => {
   }
   await Trabajo.findByIdAndDelete(req.params.id);
   res.redirect('/trabajos');
+};
+
+// NUEVO: Detalle de trabajo
+exports.detalle = async (req, res) => {
+  const trabajo = await Trabajo.findById(req.params.id)
+    .populate('cliente categoria estado');
+  res.render('trabajos/detalle', { title: 'Detalle de Trabajo', trabajo });
 };

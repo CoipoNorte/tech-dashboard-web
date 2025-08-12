@@ -18,5 +18,6 @@ router.post('/', requireLogin, upload.single('imagen'), trabajoController.crear)
 router.get('/:id/editar', requireLogin, trabajoController.formEditar);
 router.post('/:id', requireLogin, upload.single('imagen'), trabajoController.editar);
 router.post('/:id/eliminar', requireLogin, trabajoController.eliminar);
+router.get('/:id', requireLogin, trabajoController.detalle); // NUEVO: Detalle
 
 module.exports = router;
