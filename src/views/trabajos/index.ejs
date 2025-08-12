@@ -25,10 +25,9 @@ function formatFecha(fecha) {
 
 <form class="mb-3" method="get" id="filtrosForm">
   <input type="hidden" name="q" value="<%= req.query.q || '' %>">
-  <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-
+  <div class="d-flex flex-wrap align-items-center gap-3 mb-4" style="row-gap: 1.2rem;">
     <!-- Filtro de Categoría con iconos -->
-    <div class="d-flex align-items-center flex-wrap gap-1">
+    <div class="d-flex align-items-center flex-wrap gap-2">
       <span class="fw-bold me-1">Categoría:</span>
       <a href="/trabajos?<%= new URLSearchParams({ ...req.query, categoria: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.categoria ? 'active' : '' %>" title="Todas"><i class="bi bi-tags"></i></a>
       <% categorias.forEach(cat => { %>
@@ -39,7 +38,7 @@ function formatFecha(fecha) {
     </div>
 
     <!-- Filtro de Estado con iconos -->
-    <div class="d-flex align-items-center flex-wrap gap-1">
+    <div class="d-flex align-items-center flex-wrap gap-2">
       <span class="fw-bold me-1">Estado:</span>
       <a href="/trabajos?<%= new URLSearchParams({ ...req.query, estado: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.estado ? 'active' : '' %>" title="Todos"><i class="bi bi-flag"></i></a>
       <% estados.forEach(est => { %>
@@ -50,7 +49,7 @@ function formatFecha(fecha) {
     </div>
 
     <!-- Filtro de Urgencia -->
-    <div class="d-flex align-items-center flex-wrap gap-1">
+    <div class="d-flex align-items-center flex-wrap gap-2">
       <span class="fw-bold me-1">Urgencia:</span>
       <a href="/trabajos?<%= new URLSearchParams({ ...req.query, urgencia: '' }).toString() %>" class="btn btn-outline-secondary btn-sm <%= !req.query.urgencia ? 'active' : '' %>" title="Todas"><i class="bi bi-exclamation-circle"></i></a>
       <% urgencias.forEach(urg => { %>
@@ -61,7 +60,7 @@ function formatFecha(fecha) {
     </div>
 
     <!-- Filtro de Fechas -->
-    <div class="d-flex align-items-center flex-wrap gap-1">
+    <div class="d-flex align-items-center flex-wrap gap-2">
       <span class="fw-bold me-1">Fechas:</span>
       <span class="input-group input-group-sm" style="width:auto;">
         <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fechaInicio').showPicker()">
@@ -77,7 +76,7 @@ function formatFecha(fecha) {
     </div>
 
     <!-- Ordenar por -->
-    <div class="d-flex align-items-center flex-wrap gap-1">
+    <div class="d-flex align-items-center flex-wrap gap-2">
       <span class="fw-bold me-1">Ordenar:</span>
       <select name="orden" class="form-select form-select-sm d-inline-block w-auto" onchange="document.getElementById('filtrosForm').submit()">
         <option value="">--</option>

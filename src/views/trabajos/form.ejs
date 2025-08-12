@@ -1,79 +1,131 @@
 <%- include('../partials/header', { title }) %>
 <h1><%= title %></h1>
 <form action="<%= action %>" method="post" enctype="multipart/form-data" id="trabajoForm">
-  <div class="mb-3">
+
+  <!-- Cliente (fila corta) -->
+  <div class="mb-3" style="max-width: 350px;">
     <label>Cliente</label>
-    <select name="cliente" class="form-control" required>
-      <option value="">Seleccione...</option>
-      <% clientes.forEach(c => { %>
-        <option value="<%= c._id %>" <%= (trabajo.cliente && trabajo.cliente.toString() === c._id.toString()) || (clienteId && clienteId == c._id) ? 'selected' : '' %>><%= c.nombre %></option>
-      <% }) %>
-    </select>
-  </div>
-  <div class="mb-3">
-    <label>Descripción</label>
-    <input type="text" name="descripcion" class="form-control" value="<%= trabajo.descripcion || '' %>" required>
-  </div>
-  <div class="mb-3">
-    <label>Observaciones</label>
-    <textarea name="observaciones" class="form-control"><%= trabajo.observaciones || '' %></textarea>
-  </div>
-  <div class="mb-3">
-    <label>Precio</label>
-    <input type="number" name="precio" class="form-control" value="<%= trabajo.precio || '' %>">
-  </div>
-  <div class="mb-3">
-    <label>Fecha Ingreso</label>
-    <input type="date" name="fechaIngreso" id="fechaIngreso" class="form-control" value="<%= trabajo.fechaIngresoInput || '' %>">
-  </div>
-  <div class="mb-3">
-    <label>Fecha Entrega</label>
-    <input type="date" name="fechaEntrega" id="fechaEntrega" class="form-control" value="<%= trabajo.fechaEntregaInput || '' %>">
-  </div>
-  <div class="mb-3">
-    <label>Categoría</label>
-    <select name="categoria" class="form-control" required>
-      <option value="">Seleccione...</option>
-      <% categorias.forEach(cat => { %>
-        <option value="<%= cat._id %>" <%= (trabajo.categoria && trabajo.categoria.toString() === cat._id.toString()) ? 'selected' : '' %>><%= cat.nombre %></option>
-      <% }) %>
-    </select>
-  </div>
-  <div class="mb-3">
-    <label>Estado</label>
-    <select name="estado" class="form-control" required>
-      <option value="">Seleccione...</option>
-      <% estados.forEach(est => { %>
-        <option value="<%= est._id %>" <%= (trabajo.estado && trabajo.estado.toString() === est._id.toString()) ? 'selected' : '' %>><%= est.nombre %></option>
-      <% }) %>
-    </select>
-  </div>
-  <div class="mb-3">
-    <label>Urgencia</label>
     <div class="input-group">
-      <select name="urgencia" id="urgenciaSelect" class="form-control" required>
+      <span class="input-group-text"><i class="bi bi-person"></i></span>
+      <select name="cliente" class="form-control" required>
         <option value="">Seleccione...</option>
-        <% urgencias.forEach(urg => { %>
-          <option value="<%= urg._id %>" data-nombre="<%= urg.nombre %>"
-            <%= (trabajo.urgencia && ((trabajo.urgencia._id ? trabajo.urgencia._id.toString() : trabajo.urgencia.toString()) === urg._id.toString())) ? 'selected' : '' %>>
-            <%= urg.nombre %>
-          </option>
+        <% clientes.forEach(c => { %>
+          <option value="<%= c._id %>" <%= (trabajo.cliente && trabajo.cliente.toString() === c._id.toString()) || (clienteId && clienteId == c._id) ? 'selected' : '' %>><%= c.nombre %></option>
         <% }) %>
       </select>
-      <button type="button" class="btn btn-outline-info" id="calcularUrgenciaBtn" title="Calcular urgencia automáticamente">
-        <i class="bi bi-lightning-charge"></i> Calcular
-      </button>
     </div>
   </div>
+
+  <!-- Descripción (100%) -->
   <div class="mb-3">
-    <label>Imagen</label>
-    <% if (trabajo.imagen) { %>
-      <img src="/uploads/<%= trabajo.imagen %>" style="width:100px;"><br>
-    <% } %>
-    <input type="file" name="imagen" class="form-control">
+    <label>Descripción</label>
+    <div class="input-group">
+      <span class="input-group-text bg-primary text-white"><i class="bi bi-card-text"></i></span>
+      <input type="text" name="descripcion" class="form-control border-primary" value="<%= trabajo.descripcion || '' %>" required>
+    </div>
   </div>
-  <button class="btn btn-primary">Guardar</button>
-  <a href="/trabajos" class="btn btn-secondary">Cancelar</a>
+
+  <!-- Observaciones (100%) -->
+  <div class="mb-3">
+    <label>Observaciones</label>
+    <div class="input-group">
+      <span class="input-group-text bg-info text-white"><i class="bi bi-chat-left-text"></i></span>
+      <textarea name="observaciones" class="form-control border-info"><%= trabajo.observaciones || '' %></textarea>
+    </div>
+  </div>
+
+  <!-- Precio, Fecha Ingreso, Fecha Entrega (misma fila) -->
+  <div class="row mb-3">
+    <div class="col-md-4 mb-2 mb-md-0">
+      <label>Precio</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-cash-coin"></i></span>
+        <input type="number" name="precio" class="form-control" value="<%= trabajo.precio || '' %>">
+      </div>
+    </div>
+    <div class="col-md-4 mb-2 mb-md-0">
+      <label>Fecha Ingreso</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-calendar-plus"></i></span>
+        <input type="date" name="fechaIngreso" id="fechaIngreso" class="form-control" value="<%= trabajo.fechaIngresoInput || '' %>">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label>Fecha Entrega</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+        <input type="date" name="fechaEntrega" id="fechaEntrega" class="form-control" value="<%= trabajo.fechaEntregaInput || '' %>">
+      </div>
+    </div>
+  </div>
+
+  <!-- Categoría, Estado, Urgencia (misma fila) -->
+  <div class="row mb-3">
+    <div class="col-md-4 mb-2 mb-md-0">
+      <label>Categoría</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-tags"></i></span>
+        <select name="categoria" class="form-control" required>
+          <option value="">Seleccione...</option>
+          <% categorias.forEach(cat => { %>
+            <option value="<%= cat._id %>" <%= (trabajo.categoria && trabajo.categoria.toString() === cat._id.toString()) ? 'selected' : '' %>><%= cat.nombre %></option>
+          <% }) %>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4 mb-2 mb-md-0">
+      <label>Estado</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-flag"></i></span>
+        <select name="estado" class="form-control" required>
+          <option value="">Seleccione...</option>
+          <% estados.forEach(est => { %>
+            <option value="<%= est._id %>" <%= (trabajo.estado && trabajo.estado.toString() === est._id.toString()) ? 'selected' : '' %>><%= est.nombre %></option>
+          <% }) %>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label>Urgencia</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-exclamation-circle-fill"></i></span>
+        <select name="urgencia" id="urgenciaSelect" class="form-control" required>
+          <option value="">Seleccione...</option>
+          <% urgencias.forEach(urg => { %>
+            <option value="<%= urg._id %>" data-nombre="<%= urg.nombre %>"
+              <%= (trabajo.urgencia && ((trabajo.urgencia._id ? trabajo.urgencia._id.toString() : trabajo.urgencia.toString()) === urg._id.toString())) ? 'selected' : '' %>>
+              <%= urg.nombre %>
+            </option>
+          <% }) %>
+        </select>
+        <button type="button" class="btn btn-outline-info" id="calcularUrgenciaBtn" title="Calcular urgencia automáticamente">
+          <i class="bi bi-lightning-charge"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Imagen: icono grande para seleccionar/cambiar -->
+  <div class="mb-4 text-center">
+    <label class="form-label d-block">Imagen</label>
+    <label for="imagenInput" style="cursor:pointer;">
+      <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light border border-2 shadow"
+            style="width: 90px; height: 90px; font-size: 2.5rem;">
+        <i class="bi bi-image"></i>
+      </span>
+      <input type="file" name="imagen" id="imagenInput" class="d-none">
+    </label>
+    <% if (trabajo.imagen) { %>
+      <div class="mt-2">
+        <img src="/uploads/<%= trabajo.imagen %>" style="max-width:120px;" class="rounded shadow">
+      </div>
+    <% } %>
+  </div>
+
+  <div class="text-center">
+    <button class="btn btn-primary"><i class="bi bi-save"></i> Guardar</button>
+    <a href="/trabajos" class="btn btn-secondary">Cancelar</a>
+  </div>
 </form>
 
 <script>

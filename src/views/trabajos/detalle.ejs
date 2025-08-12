@@ -1,23 +1,65 @@
 <%- include('../partials/header', { title }) %>
-<h1>Detalle de Trabajo</h1>
-<div class="card mb-4">
-  <div class="card-body">
-    <h4 class="card-title"><%= trabajo.descripcion %></h4>
-    <p><strong>Cliente:</strong> <%= trabajo.cliente ? trabajo.cliente.nombre : '' %></p>
-    <p><strong>Categoría:</strong> <%= trabajo.categoria ? trabajo.categoria.nombre : '' %></p>
-    <p><strong>Estado:</strong> <span class="badge" style="background-color: <%= trabajo.estado ? trabajo.estado.color : '#ccc' %>"><%= trabajo.estado ? trabajo.estado.nombre : '' %></span></p>
-    <p><strong>Urgencia:</strong> <span class="badge <%= trabajo.urgencia === 'alta' ? 'bg-danger' : (trabajo.urgencia === 'media' ? 'bg-warning text-dark' : 'bg-success') %>"><%= trabajo.urgencia %></span></p>
-    <p><strong>Precio:</strong> $<%= trabajo.precio %></p>
-    <p><strong>Fecha Ingreso:</strong> <%= trabajo.fechaIngreso ? trabajo.fechaIngreso.toLocaleDateString() : '' %></p>
-    <p><strong>Fecha Entrega:</strong> <%= trabajo.fechaEntrega ? trabajo.fechaEntrega.toLocaleDateString() : '' %></p>
-    <p><strong>Observaciones:</strong> <%= trabajo.observaciones || 'Sin observaciones' %></p>
-    <% if (trabajo.imagen) { %>
-      <p><strong>Foto:</strong><br>
-        <img src="/uploads/<%= trabajo.imagen %>" style="max-width:300px;">
-      </p>
-    <% } %>
-    <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-primary"><i class="bi bi-pencil"></i> Editar</a>
-    <a href="/trabajos" class="btn btn-secondary">Volver</a>
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow mb-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-3">
+          <!-- Icono de categoría sobre fondo de color de estado -->
+          <span class="d-inline-flex align-items-center justify-content-center rounded-circle me-3"
+                style="background-color: <%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#ccc' %>; width:3rem; height:3rem;">
+            <i class="<%= trabajo.categoria && trabajo.categoria.icono ? trabajo.categoria.icono : 'bi bi-tag' %>" style="font-size:1.7rem; color:#fff"></i>
+          </span>
+          <div>
+            <h2 class="mb-0"><%= trabajo.descripcion %></h2>
+            <div class="text-muted">
+              <i class="bi bi-person"></i> <%= trabajo.cliente ? trabajo.cliente.nombre : '' %>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="mb-3">
+          <span class="badge" style="background-color: <%= trabajo.estado && trabajo.estado.color ? trabajo.estado.color : '#ccc' %>; color: #fff; font-size:1rem;">
+            <i class="<%= trabajo.estado && trabajo.estado.icono ? trabajo.estado.icono : 'bi bi-flag' %>"></i>
+            <%= trabajo.estado ? trabajo.estado.nombre : '' %>
+          </span>
+          <span class="badge ms-2" style="background-color: <%= trabajo.urgencia && trabajo.urgencia.color ? trabajo.urgencia.color : '#ccc' %>; color: #fff; font-size:1rem;">
+            <i class="<%= trabajo.urgencia && trabajo.urgencia.icono ? trabajo.urgencia.icono : 'bi bi-exclamation-circle-fill' %>"></i>
+            <%= trabajo.urgencia ? trabajo.urgencia.nombre : '' %>
+          </span>
+          <span class="badge ms-2 bg-secondary" style="font-size:1rem;">
+            <i class="bi bi-cash-coin"></i> $<%= trabajo.precio %>
+          </span>
+        </div>
+        <div class="mb-3">
+          <strong><i class="bi bi-calendar-plus"></i> Ingreso:</strong>
+          <%= trabajo.fechaIngreso ? new Date(trabajo.fechaIngreso).toLocaleDateString('es-ES') : '' %>
+          <span class="ms-3"><strong><i class="bi bi-calendar-check"></i> Entrega:</strong>
+          <%= trabajo.fechaEntrega ? new Date(trabajo.fechaEntrega).toLocaleDateString('es-ES') : '' %></span>
+        </div>
+        <div class="mb-3">
+          <strong><i class="bi bi-tags"></i> Categoría:</strong>
+          <%= trabajo.categoria ? trabajo.categoria.nombre : '' %>
+        </div>
+        <div class="mb-3">
+          <strong><i class="bi bi-card-text"></i> Descripción:</strong>
+          <div class="alert alert-primary mt-2" style="white-space: pre-line;"><%= trabajo.descripcion %></div>
+        </div>
+        <div class="mb-3">
+          <strong><i class="bi bi-chat-left-text"></i> Observaciones:</strong>
+          <div class="alert alert-info mt-2" style="white-space: pre-line;"><%= trabajo.observaciones || 'Sin observaciones' %></div>
+        </div>
+        <% if (trabajo.imagen) { %>
+          <div class="mb-3">
+            <strong><i class="bi bi-image"></i> Imagen:</strong><br>
+            <img src="/uploads/<%= trabajo.imagen %>" alt="Imagen del trabajo" class="img-fluid rounded shadow mt-2" style="max-width:300px;">
+          </div>
+        <% } %>
+        <div class="mt-4">
+          <a href="/trabajos/<%= trabajo._id %>/editar" class="btn btn-primary"><i class="bi bi-pencil"></i> Editar</a>
+          <a href="/trabajos" class="btn btn-secondary">Volver</a>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <%- include('../partials/footer') %>

@@ -1,18 +1,21 @@
 <%- include('../partials/header', { title }) %>
 <h1><%= title %></h1>
 <form action="<%= action %>" method="post">
-  <div class="mb-3">
+  <div class="mb-3" style="max-width: 350px;">
     <label>Nombre</label>
-    <input type="text" name="nombre" class="form-control" value="<%= categoria.nombre || '' %>" required>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-tags"></i></span>
+      <input type="text" name="nombre" class="form-control" value="<%= categoria.nombre || '' %>" required>
+    </div>
   </div>
   <div class="mb-3">
     <label>Icono</label>
     <input type="hidden" name="icono" id="iconoInput" value="<%= categoria.icono || 'bi bi-tag' %>">
     <div class="table-responsive">
-      <table class="table table-bordered" style="max-width: 400px;">
+      <table class="table table-bordered" style="max-width: 800px;">
         <tbody>
           <%
-            // Lista de iconos sugeridos, puedes agregar más
+            // Lista extendida de iconos sugeridos
             const iconos = [
               'bi bi-tag', 'bi bi-laptop', 'bi bi-phone', 'bi bi-printer',
               'bi bi-tv', 'bi bi-cpu', 'bi bi-tools', 'bi bi-battery-charging',
@@ -21,11 +24,16 @@
               'bi bi-headphones', 'bi bi-router', 'bi bi-bluetooth', 'bi bi-plug',
               'bi bi-motherboard', 'bi bi-sd-card', 'bi bi-speaker', 'bi bi-mic',
               'bi bi-display', 'bi bi-disc', 'bi bi-keyboard', 'bi bi-pc-display',
-              'bi bi-pc', 'bi bi-tablet-landscape', 'bi bi-tablet', 'bi bi-watch'
+              'bi bi-pc', 'bi bi-tablet-landscape', 'bi bi-tablet', 'bi bi-watch',
+              'bi bi-bag', 'bi bi-box', 'bi bi-box-seam', 'bi bi-archive',
+              'bi bi-calendar', 'bi bi-calendar-check', 'bi bi-calendar-event',
+              'bi bi-clipboard', 'bi bi-clipboard-check', 'bi bi-clipboard-data',
+              'bi bi-clipboard-plus', 'bi bi-clipboard-x', 'bi bi-collection',
+              'bi bi-columns', 'bi bi-diagram-3', 'bi bi-diagram-2', 'bi bi-diagram-2-fill'
             ];
-            for (let i = 0; i < iconos.length; i += 4) { %>
+            for (let i = 0; i < iconos.length; i += 8) { %>
               <tr>
-                <% for (let j = 0; j < 4; j++) {
+                <% for (let j = 0; j < 8; j++) {
                   const idx = i + j;
                   if (iconos[idx]) { %>
                     <td class="text-center">
@@ -49,11 +57,12 @@
       <i id="iconoPreview" class="<%= categoria.icono || 'bi bi-tag' %>" style="font-size:2rem"></i>
     </div>
   </div>
-  <button class="btn btn-primary">Guardar</button>
-  <a href="/categorias" class="btn btn-secondary">Cancelar</a>
+  <div class="text-center">
+    <button class="btn btn-primary"><i class="bi bi-save"></i> Guardar</button>
+    <a href="/categorias" class="btn btn-secondary">Cancelar</a>
+  </div>
 </form>
 <script>
-  // Selección visual de icono
   document.querySelectorAll('.icono-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       document.getElementById('iconoInput').value = this.getAttribute('data-icono');

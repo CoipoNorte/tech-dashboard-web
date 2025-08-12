@@ -1,15 +1,68 @@
 <%- include('../partials/header', { title }) %>
 <h1><%= title %></h1>
 <form action="<%= action %>" method="post">
-  <div class="mb-3">
+  <div class="mb-3" style="max-width: 350px;">
     <label>Nombre</label>
-    <input type="text" name="nombre" class="form-control" value="<%= urgencia.nombre || '' %>" required>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-exclamation-circle-fill"></i></span>
+      <input type="text" name="nombre" class="form-control" value="<%= urgencia.nombre || '' %>" required>
+    </div>
   </div>
-  <div class="mb-3">
+  <div class="mb-3" style="max-width: 200px;">
     <label>Color</label>
     <input type="color" name="color" class="form-control form-control-color" value="<%= urgencia.color || '#6c757d' %>">
   </div>
-  <button class="btn btn-primary">Guardar</button>
-  <a href="/urgencias" class="btn btn-secondary">Cancelar</a>
+  <div class="mb-3">
+    <label>Icono</label>
+    <input type="hidden" name="icono" id="iconoInput" value="<%= urgencia.icono || 'bi bi-exclamation-circle-fill' %>">
+    <div class="table-responsive">
+      <table class="table table-bordered" style="max-width: 400px;">
+        <tbody>
+          <%
+            const iconos = [
+              'bi bi-exclamation-circle-fill', 'bi bi-exclamation-circle', 'bi bi-exclamation-triangle-fill',
+              'bi bi-exclamation-triangle', 'bi bi-lightning', 'bi bi-lightning-charge', 'bi bi-bell-fill',
+              'bi bi-bell', 'bi bi-alarm-fill', 'bi bi-alarm', 'bi bi-stopwatch', 'bi bi-stopwatch-fill'
+            ];
+            for (let i = 0; i < iconos.length; i += 4) { %>
+              <tr>
+                <% for (let j = 0; j < 4; j++) {
+                  const idx = i + j;
+                  if (iconos[idx]) { %>
+                    <td class="text-center">
+                      <button type="button"
+                        class="btn btn-light icono-btn <%= (urgencia.icono === iconos[idx] || (!urgencia.icono && iconos[idx] === 'bi bi-exclamation-circle-fill')) ? 'border-primary border-3' : '' %>"
+                        data-icono="<%= iconos[idx] %>">
+                        <i class="<%= iconos[idx] %>" style="font-size:2rem"></i>
+                      </button>
+                    </td>
+                  <% } else { %>
+                    <td></td>
+                  <% } %>
+                <% } %>
+              </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-2">
+      <span>Vista previa: </span>
+      <i id="iconoPreview" class="<%= urgencia.icono || 'bi bi-exclamation-circle-fill' %>" style="font-size:2rem"></i>
+    </div>
+  </div>
+  <div class="text-center">
+    <button class="btn btn-primary"><i class="bi bi-save"></i> Guardar</button>
+    <a href="/urgencias" class="btn btn-secondary">Cancelar</a>
+  </div>
 </form>
+<script>
+  document.querySelectorAll('.icono-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('iconoInput').value = this.getAttribute('data-icono');
+      document.getElementById('iconoPreview').className = this.getAttribute('data-icono');
+      document.querySelectorAll('.icono-btn').forEach(b => b.classList.remove('border-primary', 'border-3'));
+      this.classList.add('border-primary', 'border-3');
+    });
+  });
+</script>
 <%- include('../partials/footer') %>

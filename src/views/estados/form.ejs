@@ -1,11 +1,14 @@
 <%- include('../partials/header', { title }) %>
 <h1><%= title %></h1>
 <form action="<%= action %>" method="post">
-  <div class="mb-3">
+  <div class="mb-3" style="max-width: 350px;">
     <label>Nombre</label>
-    <input type="text" name="nombre" class="form-control" value="<%= estado.nombre || '' %>" required>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-flag"></i></span>
+      <input type="text" name="nombre" class="form-control" value="<%= estado.nombre || '' %>" required>
+    </div>
   </div>
-  <div class="mb-3">
+  <div class="mb-3" style="max-width: 200px;">
     <label>Color</label>
     <input type="color" name="color" class="form-control form-control-color" value="<%= estado.color || '#6c757d' %>">
   </div>
@@ -48,8 +51,10 @@
       <i id="iconoPreview" class="<%= estado.icono || 'bi bi-flag' %>" style="font-size:2rem"></i>
     </div>
   </div>
-  <button class="btn btn-primary">Guardar</button>
-  <a href="/estados" class="btn btn-secondary">Cancelar</a>
+  <div class="text-center">
+    <button class="btn btn-primary"><i class="bi bi-save"></i> Guardar</button>
+    <a href="/estados" class="btn btn-secondary">Cancelar</a>
+  </div>
 </form>
 <script>
   document.querySelectorAll('.icono-btn').forEach(btn => {

@@ -1,30 +1,80 @@
 <%- include('../partials/header', { title }) %>
-<h1>Mi Perfil</h1>
-<% if (error) { %>
-  <div class="alert alert-info"><%= error %></div>
-<% } %>
-<form method="post">
-  <div class="mb-3">
-    <label>Nombre</label>
-    <input type="text" name="nombre" class="form-control" value="<%= usuario.nombre %>" required>
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card shadow mb-4">
+      <div class="card-body">
+        <h2 class="mb-4 text-center"><i class="bi bi-person-circle"></i> Mi Perfil</h2>
+        <% if (error) { %>
+          <div class="alert alert-info text-center"><%= error %></div>
+        <% } %>
+        <form method="post">
+          <div class="mb-3">
+            <label>Nombre</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <input type="text" name="nombre" class="form-control" value="<%= usuario.nombre %>" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label>Usuario</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+              <input type="text" class="form-control" value="<%= usuario.username %>" disabled>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label>Contraseña actual</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input type="password" name="passwordActual" class="form-control" placeholder="Solo si desea cambiar">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label>Nueva contraseña</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-key"></i></span>
+              <input type="password" name="passwordNueva" class="form-control" placeholder="Solo si desea cambiar">
+            </div>
+          </div>
+          <div class="text-center">
+            <button class="btn btn-primary"><i class="bi bi-save"></i> Actualizar</button>
+            <a href="/dashboard" class="btn btn-secondary">Volver</a>
+          </div>
+        </form>
+        <hr>
+        <div class="text-center mt-3">
+          <a href="/usuarios/nuevo" class="btn btn-success"><i class="bi bi-person-plus"></i> Nuevo Usuario</a>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="mb-3">
-    <label>Usuario</label>
-    <input type="text" class="form-control" value="<%= usuario.username %>" disabled>
-  </div>
-  <div class="mb-3">
-    <label>Contraseña actual</label>
-    <input type="password" name="passwordActual" class="form-control">
-  </div>
-  <div class="mb-3">
-    <label>Nueva contraseña</label>
-    <input type="password" name="passwordNueva" class="form-control">
-  </div>
-  <button class="btn btn-primary">Actualizar</button>
-  <a href="/dashboard" class="btn btn-secondary">Volver</a>
-</form>
+</div>
 
-<!-- Botón para crear nuevo usuario -->
-<a href="/usuarios/nuevo" class="btn btn-success mt-4"><i class="bi bi-person-plus"></i> Nuevo Usuario</a>
-
+<!-- Cards de usuarios -->
+<div class="row justify-content-center mt-4">
+  <div class="col-lg-8">
+    <h4 class="mb-3 text-center"><i class="bi bi-people"></i> Usuarios del sistema</h4>
+    <div class="row g-3">
+      <% usuarios.forEach(u => { %>
+        <div class="col-md-6 col-lg-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+              <i class="bi bi-person-circle" style="font-size:2.5rem; color:#0dcaf0;"></i>
+              <h5 class="card-title mt-2 mb-0"><%= u.nombre %></h5>
+              <div class="text-muted mb-2">@<%= u.username %></div>
+              <a href="/usuarios/<%= u._id %>/editar" class="btn btn-sm btn-primary me-1" title="Editar">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <form action="/usuarios/<%= u._id %>/eliminar" method="post" style="display:inline;">
+                <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar usuario?')" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
 <%- include('../partials/footer') %>
